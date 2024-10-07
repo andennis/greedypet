@@ -1,0 +1,26 @@
+---
+exchange:
+  name: bybit
+  market: spot
+  api_key: some_key
+  api_secret: some_secret
+
+algorithm: long
+symbol: FTM/USDT
+
+entry_condition:
+  signals:
+    - name: BB
+      time_frame: 5m
+
+exit_condition:
+  mode: signal
+  signal:
+    filters:
+      - name: BB
+        time_frame: 15m
+      - name: RSI
+        time_frame: 15m
+        condition:
+          gt: 70
+    pnl: 2%
