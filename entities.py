@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 from enum import Enum, IntEnum
 
@@ -25,7 +26,7 @@ class TimeFrame(str, Enum):
     TF_1D = "1d"
 
 
-class ConditionType(str, Enum):
+class ConditionOperator(str, Enum):
     GT = "gt"
     LT = "lt"
 
@@ -36,8 +37,8 @@ class ExitMode(str, Enum):
 
 class Exchange(BaseModel):
     name: str
-    api_key: str
-    api_secret: str
+    api_key: str | None = None
+    api_secret: str | None = None
 
 
 class ExchangeMarket(BaseModel):
@@ -46,14 +47,14 @@ class ExchangeMarket(BaseModel):
 
 
 class FilterCondition(BaseModel):
-    condition: ConditionType
+    operator: ConditionOperator
     value: float
 
 
 class Filter(BaseModel):
     type: FilterType
     time_frame: TimeFrame
-    condition: FilterCondition | None
+    condition: FilterCondition | None = None
 
 
 class EntryCondition(BaseModel):

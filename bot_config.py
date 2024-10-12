@@ -1,3 +1,4 @@
+import os
 import yaml
 import logging
 from pydantic import BaseModel
@@ -11,7 +12,7 @@ class GPConfig(BaseModel):
     market: ExchangeMarket
     trade_algorithm: TradeAlgorithm
     entry_condition: EntryCondition
-    exit_condition: ExitCondition
+    # exit_condition: ExitCondition
 
 
 GP_CONFIG:  GPConfig
@@ -23,3 +24,9 @@ def load_config(file_name: str):
         logger.info(f"Config loaded from {file_name}")
         global GP_CONFIG
         GP_CONFIG = GPConfig(**cfg)
+        # Load api key and secret from env
+        if not GP_CONFIG.exchange.api_key:
+            GP_CONFIG.exchange.api_key = os.environ.get("GP_API_KEY")
+        if not GP_CONFIG.exchange.api_secret:
+            GP_CONFIG.exchange.api_key = os.environ.get("GP_API_SECRET")
+
