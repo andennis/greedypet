@@ -6,13 +6,13 @@ import sys
 import click
 import pathlib
 
-from bot_config import load_config
+from gp_config import load_config
 
 logger = logging.getLogger(__name__)
 LOG_LEVELS = list(map(logging.getLevelName, [logging.INFO, logging.DEBUG]))
 
 cwd = pathlib.Path(__file__).parent
-default_config_file = cwd / "bot_config.yaml"
+default_config_file = cwd / "gp_config.yaml"
 
 
 def _configure_logging(log_dir: str, log_level: str):
