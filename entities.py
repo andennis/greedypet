@@ -1,6 +1,5 @@
-from typing import Optional
 from pydantic import BaseModel, Field
-from enum import Enum, IntEnum
+from enum import Enum
 
 
 class MarketType(str, Enum):

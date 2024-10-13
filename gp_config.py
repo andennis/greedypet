@@ -12,7 +12,7 @@ class GPConfig(BaseModel):
     market: ExchangeMarket
     trade_algorithm: TradeAlgorithm
     entry_condition: EntryCondition
-    # exit_condition: ExitCondition
+    exit_condition: ExitCondition
 
 
 GP_CONFIG:  GPConfig
