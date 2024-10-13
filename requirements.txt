@@ -1,5 +1,8 @@
 click==8.1.7
 pydantic==2.9.2
 PyYAML==6.0.2
+pytest==8.3.3
+black==24.10.0
 ccxt==4.4.14
+pandas==2.2.3
 # numpy==1.26.4

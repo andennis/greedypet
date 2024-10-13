@@ -1,5 +1,10 @@
 from pydantic import BaseModel, Field
-from enum import Enum
+from enum import Enum, IntEnum
+from dataclasses import dataclass
+
+
+class ExchangeName(str, Enum):
+    BYBIT = "bybit"
 
 
 class MarketType(str, Enum):
@@ -7,7 +12,7 @@ class MarketType(str, Enum):
 
 
 class TradeAlgorithm(str, Enum):
-    LONG = "long",
+    LONG = ("long",)
     SHORT = "short"
 
 
@@ -17,12 +22,13 @@ class FilterType(str, Enum):
 
 
 class TimeFrame(str, Enum):
-    TF_1M = "1m",
-    TF_5M = "5m",
+    TF_1M = "1m"
+    TF_5M = "5m"
     TF_15M = "15m"
     TF_30M = "30m"
     TF_1H = "1h"
     TF_1D = "1d"
+    TF_1W = "1w"
 
 
 class ConditionOperator(str, Enum):
@@ -35,9 +41,10 @@ class ExitMode(str, Enum):
 
 
 class Exchange(BaseModel):
-    name: str
+    name: ExchangeName
     api_key: str | None = None
     api_secret: str | None = None
+    test_mode: bool | None = True
 
 
 class ExchangeMarket(BaseModel):
@@ -68,3 +75,16 @@ class ExitSignal(BaseModel):
 class ExitCondition(BaseModel):
     mode: ExitMode
     signal: ExitSignal
+
+
+class TradeSide(IntEnum):
+    BUY = 1
+    SELL = 2
+
+
+@dataclass
+class Trade:
+    side: TradeSide
+    price: float
+    amount: float
+    timestamp: int
