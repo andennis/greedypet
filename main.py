@@ -70,7 +70,7 @@ signal.signal(signal.SIGQUIT, _signal_handler)
 def main(config_file: str, name: str, log_level: str, log_dir: str):
     _configure_logging(log_dir, log_level)
     logger.info(f"Bot {name} started")
-    load_config(config_file)
+    config = load_config(config_file)
 
 
 if __name__ == "__main__":
