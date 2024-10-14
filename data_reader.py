@@ -4,7 +4,7 @@ from entities import TimeFrame, Exchange
 
 class ExchangeDataReader:
     def __init__(self, exchange_config: Exchange):
-        exchange_class = getattr(ccxt, exchange_config.name.value)
+        exchange_class = getattr(ccxt, exchange_config.id.value)
         self._exchange = exchange_class({
             'apiKey': exchange_config.api_key,
             'secret': exchange_config.api_secret,

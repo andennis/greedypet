@@ -3,7 +3,7 @@ from enum import Enum, IntEnum
 from dataclasses import dataclass
 
 
-class ExchangeName(str, Enum):
+class ExchangeId(str, Enum):
     BYBIT = "bybit"
 
 
@@ -41,7 +41,7 @@ class ExitMode(str, Enum):
 
 
 class Exchange(BaseModel):
-    name: ExchangeName
+    id: ExchangeId
     api_key: str | None = None
     api_secret: str | None = None
     test_mode: bool | None = True

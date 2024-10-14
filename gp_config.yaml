@@ -1,6 +1,6 @@
 ---
 exchange:
-  name: bybit
+  id: bybit
   api_key: some_key
   api_secret: some_secret
   test_mode: true
