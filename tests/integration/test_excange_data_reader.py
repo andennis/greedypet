@@ -1,6 +1,4 @@
 import pytest
-from pycares import symbol
-
 from data_reader import ExchangeDataReader
 from entities import TimeFrame
 
