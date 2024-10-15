@@ -1,8 +1,6 @@
 import os
-from select import select
-
 import ccxt.pro as ccxt
-from entities import TimeFrame, Exchange, Trade
+from entities import TimeFrame, Exchange, Trade, TradeSide
 
 
 class ExchangeDataReader:
@@ -15,6 +13,7 @@ class ExchangeDataReader:
             }
         )
         self._exchange.set_sandbox_mode(exchange_config.test_mode)
+        # self._exchange.exchange.enable_demo_trading(True)
 
     @property
     def exchange(self):
@@ -32,7 +31,7 @@ class ExchangeDataReader:
         return list(
             map(
                 lambda t: Trade(
-                    side=t["side"],
+                    side=TradeSide.BUY if t["side"] == "buy" else TradeSide.SELL,
                     price=t["price"],
                     amount=t["amount"],
                     timestamp=t["timestamp"],

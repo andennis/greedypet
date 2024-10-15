@@ -45,6 +45,7 @@ class Exchange(BaseModel):
     api_key: str | None = None
     api_secret: str | None = None
     test_mode: bool | None = True
+    # demo_trading: bool | None = False
 
 
 class ExchangeMarket(BaseModel):
