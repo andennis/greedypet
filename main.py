@@ -2,11 +2,9 @@ import os
 import logging
 import yaml
 import signal
-import sys
 import click
 import pathlib
 import asyncio
-import functools
 
 from gp_config import load_config, GPConfig
 
@@ -43,44 +41,43 @@ def _load_config(file_name: str):
         return cfg
 
 
-_RUNNING_EVENT = asyncio.Event()
-_TERMINATION_EVENT = asyncio.Event()
-
-
-def _is_running() -> bool:
-    return not _RUNNING_EVENT.is_set()
-
-
 async def _read_market_trades(config: GPConfig):
     logger.info(f"Trades reading started")
-    while _is_running():
-        logger.info(f"Read trades")
-        await asyncio.sleep(1)
-    logger.info(f"Trades reading finished")
+    try:
+        while True:
+            logger.info(f"Read trades")
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        logger.info(f"Trades reading finished")
 
 
 async def _track_trade_signals(config: GPConfig):
     logger.info(f"Trade signals tracking started")
-    while _is_running():
-        logger.info(f"Track trade signals")
-        await asyncio.sleep(1)
-    logger.info(f"Trade signals tracking finished")
+    try:
+        while True:
+            logger.info(f"Track trade signals")
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        logger.info(f"Trade signals tracking finished")
 
 
 async def _make_market_trades(config: GPConfig):
     logger.info(f"Trading started")
-    while _is_running():
-        logger.info(f"Make trading")
-        await asyncio.sleep(1)
-    logger.info(f"Trading finished")
+    try:
+        while True:
+            logger.info(f"Make trading")
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        logger.info(f"Trading finished")
+
+
+TRADE_TASKS: list[asyncio.tasks.Task] = []
 
 
 async def _signal_handler():
-    logger.info("Trading process is being stopped")
-    _RUNNING_EVENT.set()
-    await _TERMINATION_EVENT.wait()
-    logger.info("Trading process has been stopped gracefully")
-    asyncio.get_event_loop().stop()
+    logger.info("Trading process is being stopped...")
+    for tsk in TRADE_TASKS:
+        tsk.cancel()
 
 
 async def run_trades(config: GPConfig):
@@ -88,12 +85,10 @@ async def run_trades(config: GPConfig):
     for sig in [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]:
         ev_loop.add_signal_handler(sig, lambda: asyncio.create_task(_signal_handler()))
 
-    await asyncio.gather(
-        _read_market_trades(config),
-        _track_trade_signals(config),
-        _make_market_trades(config),
-    )
-    _TERMINATION_EVENT.set()
+    TRADE_TASKS.append(asyncio.create_task(_read_market_trades(config)))
+    TRADE_TASKS.append(asyncio.create_task(_track_trade_signals(config)))
+    TRADE_TASKS.append(asyncio.create_task(_make_market_trades(config)))
+    await asyncio.gather(*TRADE_TASKS)
 
 
 @click.command()
@@ -117,6 +112,7 @@ def main(config_file: str, name: str, log_level: str, log_dir: str):
     logger.info(f"Bot {name} started")
     config = load_config(config_file)
     asyncio.run(run_trades(config))
+    logger.info(f"Bot {name} gracefully finished")
 
 
 if __name__ == "__main__":
