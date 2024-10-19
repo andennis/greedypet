@@ -5,6 +5,7 @@ import signal
 import click
 import pathlib
 import asyncio
+import functools
 
 from gp_config import load_config, GPConfig
 
@@ -71,24 +72,23 @@ async def _make_market_trades(config: GPConfig):
         logger.info(f"Trading finished")
 
 
-TRADE_TASKS: list[asyncio.tasks.Task] = []
-
-
-async def _signal_handler():
-    logger.info("Trading process is being stopped...")
-    for tsk in TRADE_TASKS:
-        tsk.cancel()
-
-
 async def run_trades(config: GPConfig):
-    ev_loop = asyncio.get_running_loop()
-    for sig in [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]:
-        ev_loop.add_signal_handler(sig, lambda: asyncio.create_task(_signal_handler()))
+    def _signal_handler(sig):
+        logger.info(f"Trading process is being stopped by {signal.Signals(sig).name} ...")
+        asyncio.get_event_loop().remove_signal_handler(sig)
+        for tsk in tasks:
+            tsk.cancel()
 
-    TRADE_TASKS.append(asyncio.create_task(_read_market_trades(config)))
-    TRADE_TASKS.append(asyncio.create_task(_track_trade_signals(config)))
-    TRADE_TASKS.append(asyncio.create_task(_make_market_trades(config)))
-    await asyncio.gather(*TRADE_TASKS)
+    ev_loop = asyncio.get_running_loop()
+    for _sig in [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]:
+        ev_loop.add_signal_handler(_sig, functools.partial(_signal_handler, sig=signal.SIGINT))
+
+    tasks = [
+        asyncio.create_task(_read_market_trades(config)),
+        asyncio.create_task(_track_trade_signals(config)),
+        asyncio.create_task(_make_market_trades(config))
+    ]
+    await asyncio.gather(*tasks)
 
 
 @click.command()
