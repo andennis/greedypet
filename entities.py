@@ -12,7 +12,7 @@ class MarketType(str, Enum):
 
 
 class TradeAlgorithm(str, Enum):
-    LONG = ("long",)
+    LONG = "long"
     SHORT = "short"
 
 
@@ -23,10 +23,15 @@ class FilterType(str, Enum):
 
 class TimeFrame(str, Enum):
     TF_1M = "1m"
+    TF_3 = "3m"
     TF_5M = "5m"
     TF_15M = "15m"
     TF_30M = "30m"
     TF_1H = "1h"
+    TF_2H = "2h"
+    TF_4H = "4h"
+    TF_6H = "6h"
+    TF_12H = "12h"
     TF_1D = "1d"
     TF_1W = "1w"
 
@@ -40,16 +45,21 @@ class ExitMode(str, Enum):
     SIGNAL = "signal"
 
 
+class TradingMode(str, Enum):
+    SANDBOX = "sandbox"
+    DEMO = "demo"
+    REAL = "real"
+
+
 class Exchange(BaseModel):
     id: ExchangeId
     api_key: str | None = None
     api_secret: str | None = None
-    test_mode: bool | None = True
-    # demo_trading: bool | None = False
+    trading_mode: TradingMode | None = TradingMode.SANDBOX
 
 
 class ExchangeMarket(BaseModel):
-    type: MarketType
+    type: MarketType = MarketType.SPOT
     symbol: str
 
 
@@ -58,9 +68,16 @@ class FilterCondition(BaseModel):
     value: float
 
 
+class MovingAverageType(str, Enum):
+    SMA = "sma"
+    EMA = "ema"
+
+
 class Filter(BaseModel):
     type: FilterType
     time_frame: TimeFrame
+    periods: int | None = Field(gt=0, default=None)
+    moving_average: MovingAverageType | None = None
     condition: FilterCondition | None = None
 
 
@@ -70,7 +87,7 @@ class EntryCondition(BaseModel):
 
 class ExitSignal(BaseModel):
     filters: list[Filter]
-    pnl: float = Field(ge=-100, le=100)
+    pnl: float | None = Field(ge=-100, le=100, default=None)
 
 
 class ExitCondition(BaseModel):

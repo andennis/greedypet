@@ -1,6 +1,16 @@
 from unittest.mock import patch, mock_open
 from gp_config import load_config
-from entities import ExchangeId, MarketType, TradeAlgorithm, FilterType, TimeFrame, ExitMode, ConditionOperator
+from entities import (
+    ExchangeId,
+    MarketType,
+    TradeAlgorithm,
+    FilterType,
+    TimeFrame,
+    ExitMode,
+    ConditionOperator,
+    MovingAverageType,
+    TradingMode,
+)
 
 
 TEST_CONFIG_FILE_CONTENT = """
@@ -9,7 +19,7 @@ exchange:
   id: bybit
   api_key: some_key
   api_secret: some_secret
-  test_mode: true
+  trading_mode: demo
 
 market:
   type: spot
@@ -21,6 +31,7 @@ entry_condition:
   filters:
     - type: BB
       time_frame: 5m
+      periods: 21
 
 exit_condition:
   mode: signal
@@ -28,6 +39,8 @@ exit_condition:
     filters:
       - type: BB
         time_frame: 15m
+        moving_average: ema
+        periods: 20
       - type: RSI
         time_frame: 15m
         condition:
@@ -38,13 +51,14 @@ exit_condition:
 
 
 def test_load_config():
-    with patch('builtins.open', mock_open(read_data=TEST_CONFIG_FILE_CONTENT)):
+    with patch("builtins.open", mock_open(read_data=TEST_CONFIG_FILE_CONTENT)):
         config = load_config("some_file.yaml")
         assert config
         assert config.exchange
         assert config.exchange.id == ExchangeId.BYBIT
         assert config.exchange.api_key == "some_key"
         assert config.exchange.api_secret == "some_secret"
+        assert config.exchange.trading_mode == TradingMode.DEMO
         assert config.market
         assert config.market.type == MarketType.SPOT
         assert config.market.symbol == "BTC/USDT"
@@ -54,13 +68,20 @@ def test_load_config():
         assert len(config.entry_condition.filters) == 1
         assert config.entry_condition.filters[0].type == FilterType.BOLLINGER_BENDS
         assert config.entry_condition.filters[0].time_frame == TimeFrame.TF_5M
+        assert config.entry_condition.filters[0].periods == 21
+        assert not config.entry_condition.filters[0].moving_average
         assert config.exit_condition
         assert config.exit_condition.mode == ExitMode.SIGNAL
         assert config.exit_condition.signal
         assert config.exit_condition.signal.filters
         assert len(config.exit_condition.signal.filters) == 2
+        assert config.exit_condition.signal.filters[0].periods == 20
+        assert config.exit_condition.signal.filters[0].moving_average == MovingAverageType.EMA
         assert config.exit_condition.signal.filters[1].type == FilterType.RSI
         assert config.exit_condition.signal.filters[1].time_frame == TimeFrame.TF_15M
         assert config.exit_condition.signal.filters[1].condition
-        assert config.exit_condition.signal.filters[1].condition.operator == ConditionOperator.GT
+        assert (
+            config.exit_condition.signal.filters[1].condition.operator
+            == ConditionOperator.GT
+        )
         assert config.exit_condition.signal.filters[1].condition.value == 70

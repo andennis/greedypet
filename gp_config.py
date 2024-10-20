@@ -1,8 +1,6 @@
-import os
 import yaml
 import logging
 from pydantic import BaseModel
-from exceptions import GreedyPetException
 from entities import Exchange, ExchangeMarket, TradeAlgorithm, EntryCondition, ExitCondition
 
 logger = logging.getLogger(__name__)
@@ -11,7 +9,7 @@ logger = logging.getLogger(__name__)
 class GPConfig(BaseModel):
     exchange: Exchange
     market: ExchangeMarket
-    trade_algorithm: TradeAlgorithm
+    trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
     entry_condition: EntryCondition
     exit_condition: ExitCondition
 

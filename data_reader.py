@@ -1,6 +1,6 @@
 import os
 import ccxt.pro as ccxt
-from entities import TimeFrame, Exchange, Trade, TradeSide
+from entities import TimeFrame, Exchange, Trade, TradeSide, TradingMode
 
 
 class ExchangeDataReader:
@@ -12,8 +12,10 @@ class ExchangeDataReader:
                 "secret": os.environ.get("GP_API_SECRET", exchange_config.api_secret),
             }
         )
-        self._exchange.set_sandbox_mode(exchange_config.test_mode)
-        # self._exchange.exchange.enable_demo_trading(True)
+        if exchange_config.trading_mode == TradingMode.SANDBOX:
+            self._exchange.set_sandbox_mode(True)
+        elif exchange_config.trading_mode == TradingMode.DEMO:
+            self._exchange.enable_demo_trading(True)
 
     @property
     def exchange(self):
@@ -22,6 +24,12 @@ class ExchangeDataReader:
     async def read_ohlcv_data(
         self, symbol: str, time_frame: TimeFrame, limit: int
     ) -> list[list[float]]:
+        """
+        :param symbol:
+        :param time_frame:
+        :param limit:
+        :return: list[list[float]]: A list of candles ordered: timestamp, open, high, low, close, volume
+        """
         return await self._exchange.fetch_mark_ohlcv(
             symbol, timeframe=time_frame.value, limit=limit
         )
