@@ -95,6 +95,10 @@ class ExitCondition(BaseModel):
     signal: ExitSignal
 
 
+class StorageConfig:
+    pass
+
+
 class TradeSide(IntEnum):
     BUY = 1
     SELL = 2
