@@ -1,5 +1,7 @@
 import pytest
 import numpy
+import pandas as pd
+from datetime import datetime
 from trades_storage import TradesStorage
 from entities import StorageConfig, TimeFrame
 
@@ -15,7 +17,7 @@ def trades_storage(symbol: str):
 
 
 @pytest.fixture
-def ohlcv_data_5m():
+def ohlcv_data_30m():
     return [
         [1729535400000, 67012.8, 67012.8, 66686.93, 66999.28, 0.061758],
         [1729537200000, 66999.28, 67012.8, 66700.0, 67012.8, 0.048467],
@@ -25,8 +27,8 @@ def ohlcv_data_5m():
     ]
 
 
-def test_upload_initial_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_5m: list[list[float]]):
-    df = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_5M, ohlcv_data_5m)
+def test_upload_initial_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_30m):
+    df = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
     assert df is not None
     assert len(df) == 5
     assert df.index.name == "timestamp"
@@ -44,10 +46,11 @@ def test_upload_initial_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_5m:
     assert df["volume"].dtype == numpy.float64
 
 
-def test_get_latest_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_5m: list[list[float]]):
-    trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_5M, ohlcv_data_5m)
-    df = trades_storage.get_latest_ohlcv_data(TimeFrame.TF_5M, 1)
+def test_get_latest_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_30m):
+    trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
+    df = trades_storage.get_latest_ohlcv_data(TimeFrame.TF_30M, 1)
     assert df is not None
     assert len(df) == 1
-    assert df.iloc[0].values.flatten().tolist() == [67012.8, 67012.8, 66912.28, 67012.8, 0.003286]
+    assert df.iloc[0].values.flatten().tolist() == ohlcv_data_30m[4][1:]
+    assert df.index[0].to_pydatetime() == pd.Timestamp(ohlcv_data_30m[4][0], unit="ms")
 
