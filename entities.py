@@ -23,7 +23,7 @@ class FilterType(str, Enum):
 
 class TimeFrame(str, Enum):
     TF_1M = "1m"
-    TF_3 = "3m"
+    TF_3M = "3m"
     TF_5M = "5m"
     TF_15M = "15m"
     TF_30M = "30m"

@@ -42,7 +42,7 @@ class ExchangeDataReader:
                     side=TradeSide.BUY if t["side"] == "buy" else TradeSide.SELL,
                     price=t["price"],
                     amount=t["amount"],
-                    timestamp=t["timestamp"],
+                    timestamp=t["timestamp"],  # milliseconds
                 ),
                 trades,
             )

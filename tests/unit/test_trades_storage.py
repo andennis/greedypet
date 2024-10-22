@@ -53,4 +53,3 @@ def test_get_latest_ohlcv_data(trades_storage: TradesStorage, ohlcv_data_30m):
     assert len(df) == 1
     assert df.iloc[0].values.flatten().tolist() == ohlcv_data_30m[4][1:]
     assert df.index[0] == pd.Timestamp(ohlcv_data_30m[4][0], unit="ms")
-
