@@ -24,7 +24,7 @@ def ohlcv_data_30m():
         [1729537200000, 66999.28, 67012.8, 66700.0, 67012.8, 0.048467],
         [1729539000000, 67012.8, 67012.8, 67012.8, 67012.8, 0.060964],
         [1729540800000, 67012.8, 67012.8, 67012.8, 67012.8, 0.078364],
-        [1729542600000, 67012.8, 67012.8, 66912.28, 67012.8, 0.003],
+        [1729542600000, 67012.8, 67013, 66912, 67000, 0.003],
     ]
 
 
@@ -150,29 +150,60 @@ def test_add_trades_into_old_timeframe(trades_storage: TradesStorage, ohlcv_data
         trades_storage.add_trade(trade)
 
 
+@pytest.mark.parametrize(
+    "init_time_shift, time_shift, price, expected_high, expected_low, expected_close",
+    [
+        (0, 0, 67010, 67013, 66912, 67000),  # existing timestamp - close not updated
+        (1, 1, 67010, 67013, 66912, 67000),  # next existing timestamp - close not updated
+        (0, 0, 67014, 67014, 66912, 67000),  # existing timestamp only high updated
+        (0, 0, 66900, 67013, 66900, 67000),  # existing timestamp only low updated
+        (0, 1, 67010, 67013, 66912, 67010),  # next timestamp - close updated
+        (0, 1, 67014, 67014, 66912, 67014),  # next timestamp - high and close updated
+        (0, 1, 66900, 67013, 66900, 66900),  # next timestamp - low and close updated
+    ],
+)
 def test_add_trade_with_earlier_timestamp(
+    init_time_shift,
+    time_shift,
+    price,
+    expected_high,
+    expected_low,
+    expected_close,
     trades_storage: TradesStorage,
     ohlcv_data_30m,
 ):
+    # GIVEN The latest trade
+    # [1729542600000, 67012.8, 67013, 66912, 67000, 0.003]
     data = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
-    for new_price, time_delta, close_price in [
-        (67000, 0, 67000),
-        (67013, 1, 67013),
-        (67014, 1, 67014),
-        (67015, 0, 67014),
-    ]:
+    if init_time_shift > 0:
         trade = Trade(
             side=TradeSide.BUY,
-            price=new_price,
+            price=ohlcv_data_30m[-1][4],
             amount=0.01,
             timestamp=(
                 data.index[-1].timestamp()
-                + datetime.timedelta(minutes=time_delta).total_seconds()
+                + datetime.timedelta(minutes=init_time_shift).total_seconds()
             )
             * 1000,
         )
         trades_storage.add_trade(trade)
-        last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
 
-        ltf = last_tf.iloc[-1]
-        assert ltf.close == close_price
+    # WHEN
+    trade = Trade(
+        side=TradeSide.BUY,
+        price=price,
+        amount=0.01,
+        timestamp=(
+            data.index[-1].timestamp()
+            + datetime.timedelta(minutes=time_shift).total_seconds()
+        )
+        * 1000,
+    )
+    trades_storage.add_trade(trade)
+
+    # THEN
+    last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
+    ltf = last_tf.iloc[-1]
+    assert ltf.high == expected_high
+    assert ltf.low == expected_low
+    assert ltf.close == expected_close

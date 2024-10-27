@@ -61,7 +61,7 @@ class TradesStorage:
                 row = df.loc[df.index[-1]]
                 row.high = max(row.high, trade.price)
                 row.low = min(row.low, trade.price)
-                if trade.timestamp >= dfd.latest_trade_timestamp:
+                if trade.timestamp > dfd.latest_trade_timestamp:
                     row.close = trade.price
                 row.volume += trade.amount
             else:
