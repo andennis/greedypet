@@ -1,75 +1,68 @@
 import os
 import logging
+import logging.config
 import yaml
 import signal
 import click
 import pathlib
 import asyncio
 import functools
+import mergedeep
 
+import market_execution as mexec
 from gp_config import load_config, GPConfig
+
 
 logger = logging.getLogger(__name__)
 LOG_LEVELS = list(map(logging.getLevelName, [logging.INFO, logging.DEBUG]))
 
 cwd = pathlib.Path(__file__).parent
-default_config_file = cwd / "gp_config.yaml"
+APP_CONFIG_FILE = cwd / "gp_config.yaml"
+LOGGING_CONFIG_FILE = cwd / "gp_logging.yaml"
+
+LOGGING_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['console_handler']
+    },
+    'handlers': {
+        'console_handler': {
+            'level': 'INFO',
+            'formatter': 'console',
+            'class': 'logging.StreamHandler',
+        },
+        'file_handler': {
+            'level': 'INFO',
+            'formatter': 'file',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/tmp/greedypet.log',
+            'mode': 'a',
+            'maxBytes': 1048576,
+            'backupCount': 10
+        }
+    },
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s | %(process)d | %(name)s | %(levelname)s | %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s | %(process)d | %(name)s | %(levelname)s | %(message)s'
+        }
+    }
+}
 
 
-def _configure_logging(log_dir: str, log_level: str):
-    os.makedirs(log_dir, exist_ok=True)
+def _configure_logging():
+    with (open(LOGGING_CONFIG_FILE, "r") as f):
+        cfg_from_file = yaml.safe_load(f)
+        cfg = LOGGING_CONFIG.copy()
+        if cfg_from_file:
+            mergedeep.merge(cfg, cfg_from_file)
+        logging.config.dictConfig(cfg)
 
-    logging.basicConfig(
-        filename=os.path.join(log_dir, f"greedypet-{os.getpid()}.log"),
-        level=getattr(logging, log_level),
-        format="%(asctime)s | %(process)d | %(name)s | %(levelname)s | %(message)s",
-    )
-
-    # Configure console log
-    fmt = logging.Formatter(
-        "%(asctime)s | %(process)d | %(name)s | %(levelname)s | %(message)s"
-    )
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(fmt)
-    logger.addHandler(console_handler)
     logger.info("Logging has been configured")
-
-
-def _load_config(file_name: str):
-    with open(file_name, "r") as f:
-        cfg = yaml.safe_load(f)
-        logger.info(f"Config loaded from {file_name}")
-        return cfg
-
-
-async def _read_market_trades(config: GPConfig):
-    logger.info(f"Trades reading started")
-    try:
-        while True:
-            logger.info(f"Read trades")
-            await asyncio.sleep(1)
-    except asyncio.CancelledError:
-        logger.info(f"Trades reading finished")
-
-
-async def _track_trade_signals(config: GPConfig):
-    logger.info(f"Trade signals tracking started")
-    try:
-        while True:
-            logger.info(f"Track trade signals")
-            await asyncio.sleep(1)
-    except asyncio.CancelledError:
-        logger.info(f"Trade signals tracking finished")
-
-
-async def _make_market_trades(config: GPConfig):
-    logger.info(f"Trading started")
-    try:
-        while True:
-            logger.info(f"Make trading")
-            await asyncio.sleep(1)
-    except asyncio.CancelledError:
-        logger.info(f"Trading finished")
 
 
 async def run_trades(config: GPConfig):
@@ -84,9 +77,9 @@ async def run_trades(config: GPConfig):
         ev_loop.add_signal_handler(_sig, functools.partial(_signal_handler, sig=signal.SIGINT))
 
     tasks = [
-        asyncio.create_task(_read_market_trades(config)),
-        asyncio.create_task(_track_trade_signals(config)),
-        asyncio.create_task(_make_market_trades(config))
+        asyncio.create_task(mexec.reading_market_trades(config)),
+        # asyncio.create_task(mexec.tracking_trade_signals(config)),
+        # asyncio.create_task(mexec.making_market_trades(config))
     ]
     await asyncio.gather(*tasks)
 
@@ -97,20 +90,13 @@ async def run_trades(config: GPConfig):
     "--config",
     "config_file",
     type=click.Path(exists=True),
-    default=default_config_file,
+    default=APP_CONFIG_FILE,
 )
 @click.option("-n", "--name", default=f"bot-{os.getpid()}")
-@click.option(
-    "-ll",
-    "--log-level",
-    type=click.Choice(LOG_LEVELS),
-    default=logging.getLevelName(logging.INFO),
-)
-@click.option("-ld", "--log-dir", type=click.Path(exists=True), default="/tmp")
-def main(config_file: str, name: str, log_level: str, log_dir: str):
-    _configure_logging(log_dir, log_level)
-    logger.info(f"Bot {name} started")
+def main(config_file: str, name: str):
+    _configure_logging()
     config = load_config(config_file)
+    logger.info(f"Bot {name} started")
     asyncio.run(run_trades(config))
     logger.info(f"Bot {name} gracefully finished")
 

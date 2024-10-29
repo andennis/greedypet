@@ -1,0 +1,12 @@
+---
+#root:
+#    level: DEBUG
+#    handlers: [console_handler, file_handler]
+
+#handlers:
+#  console_handler:
+#    level: 'INFO'
+#
+#  file_handler:
+#    level: 'INFO'
+#    filename: "/tmp/greedypet.log"

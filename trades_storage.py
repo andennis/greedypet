@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from exceptions import GeneralAppException
 
-from entities import TimeFrame, StorageConfig, Trade
+from entities import TimeFrame, StorageConfig, Trade, OhlcvData
 from utils import timeframe_to_sec
 
 
@@ -24,7 +24,7 @@ class TradesStorage:
         self._data: dict[TimeFrame, _TimeFrameData] = dict()
 
     def upload_initial_ohlcv_data(
-        self, time_frame: TimeFrame, ohlcv_data: list[list[float]]
+        self, time_frame: TimeFrame, ohlcv_data: OhlcvData
     ) -> DataFrame:
         if not ohlcv_data:
             raise GeneralAppException("No data provided")

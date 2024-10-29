@@ -3,6 +3,9 @@ from enum import Enum, IntEnum
 from dataclasses import dataclass
 
 
+OhlcvData = list[list[float]]
+
+
 class ExchangeId(str, Enum):
     BYBIT = "bybit"
 
@@ -95,7 +98,7 @@ class ExitCondition(BaseModel):
     signal: ExitSignal
 
 
-class StorageConfig:
+class StorageConfig(BaseModel):
     pass
 
 

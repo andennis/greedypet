@@ -1,6 +1,6 @@
 from collections import defaultdict
 from data_reader import ExchangeDataReader
-from entities import ExitMode, TimeFrame, Filter, Trade
+from entities import ExitMode, TimeFrame, Filter, Trade, OhlcvData
 from gp_config import GPConfig
 from filters import filter_factory
 
@@ -17,7 +17,19 @@ class MarketDataCollector:
                 timeframe_map[flt.time_frame], max(flt.all_periods)
             )
 
-    async def collect_initial_data(self) -> dict[TimeFrame, list[list[float]]]:
+    async def collect_initial_data(self) -> dict[TimeFrame, OhlcvData]:
+        """
+        Read initial data from exchange according to filters demands.
+        Each filter requires the series of latest ohlcv time frames.
+        These series with specified time frames are loaded from exchange
+
+        Returns:
+            dict[TimeFrame, OhlcvData]: dict of OhlcvData.
+                Dict key is TimeFrame.
+                Dict value is OhlcvData which is list of float lists.
+                Each float list contains the following six elements:
+                    [timestamp (milliseconds), open, high, low, close, volume]
+        """
         timeframe_map = defaultdict(int)
         self._get_data_to_read(timeframe_map, self._config.entry_condition.filters)
         if (
@@ -38,3 +50,6 @@ class MarketDataCollector:
 
     async def collect_trades(self) -> list[Trade]:
         return await self._reader.read_latest_trades(self._config.market.symbol)
+
+    async def close(self):
+        await self._reader.close()
