@@ -21,4 +21,3 @@ def load_config(file_name: str):
         config = GPConfig(**cfg)
         logger.info(f"Config loaded from {file_name}")
         return config
-

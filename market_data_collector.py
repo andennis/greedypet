@@ -11,11 +11,20 @@ class MarketDataCollector:
         self._reader = ExchangeDataReader(config.exchange)
 
     @staticmethod
-    def _get_data_to_read(timeframe_map: dict[TimeFrame, int], filters: list[Filter]):
+    def _get_max_timeframes_len(filters: list[Filter]) -> dict[TimeFrame, int]:
+        """
+        Retrieve from filters all the time frames and their max length required by the filter
+        Args:
+            filters (list[Filter]): list of filters
+        Returns:
+            dict[TimeFrame, int]: dict of time frames (TimeFrame) mapped to number of the time frames periods
+        """
+        timeframe_map = defaultdict(int)
         for flt in map(filter_factory.create_filter, filters):
             timeframe_map[flt.time_frame] = max(
                 timeframe_map[flt.time_frame], max(flt.all_periods)
             )
+        return timeframe_map
 
     async def collect_initial_data(self) -> dict[TimeFrame, OhlcvData]:
         """
@@ -30,17 +39,13 @@ class MarketDataCollector:
                 Each float list contains the following six elements:
                     [timestamp (milliseconds), open, high, low, close, volume]
         """
-        timeframe_map = defaultdict(int)
-        self._get_data_to_read(timeframe_map, self._config.entry_condition.filters)
-        if (
-            self._config.exit_condition.mode == ExitMode.SIGNAL
-            and self._config.exit_condition.signal
-        ):
-            self._get_data_to_read(
-                timeframe_map, self._config.exit_condition.signal.filters
-            )
+        filters = self._config.entry_condition.filters
+        if self._config.exit_condition.mode == ExitMode.SIGNAL:
+            filters.extend(self._config.exit_condition.signal.filters)
 
-        result: dict[TimeFrame, list[list[float]]] = dict()
+        timeframe_map = self._get_max_timeframes_len(filters)
+
+        result: dict[TimeFrame, OhlcvData] = dict()
         for time_frame, periods in timeframe_map.items():
             result[time_frame] = await self._reader.read_ohlcv_data(
                 self._config.market.symbol, time_frame, periods

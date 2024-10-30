@@ -78,7 +78,7 @@ async def run_trades(config: GPConfig):
 
     tasks = [
         asyncio.create_task(mexec.reading_market_trades(config)),
-        # asyncio.create_task(mexec.tracking_trade_signals(config)),
+        asyncio.create_task(mexec.tracking_trade_signals(config)),
         # asyncio.create_task(mexec.making_market_trades(config))
     ]
     await asyncio.gather(*tasks)
