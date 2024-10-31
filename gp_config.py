@@ -1,7 +1,7 @@
 import yaml
 import logging
 from pydantic import BaseModel
-from entities import Exchange, ExchangeMarket, TradeAlgorithm, EntryCondition, ExitCondition, StorageConfig
+from entities import Exchange, ExchangeMarket, DealConfig, StorageConfig
 
 logger = logging.getLogger(__name__)
 
@@ -9,9 +9,7 @@ logger = logging.getLogger(__name__)
 class GPConfig(BaseModel):
     exchange: Exchange
     market: ExchangeMarket
-    trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
-    entry_condition: EntryCondition
-    exit_condition: ExitCondition
+    deal: DealConfig
     storage: StorageConfig | None = None
 
 

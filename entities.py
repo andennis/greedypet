@@ -98,6 +98,12 @@ class ExitCondition(BaseModel):
     signal: ExitSignal
 
 
+class DealConfig(BaseModel):
+    trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
+    entry_condition: EntryCondition
+    exit_condition: ExitCondition
+
+
 class StorageConfig(BaseModel):
     pass
 

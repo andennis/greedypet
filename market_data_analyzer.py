@@ -1,14 +1,15 @@
 import time
 import asyncio
 from functools import cached_property
-from entities import TimeFrame, ExitMode
-from gp_config import GPConfig
+from entities import TimeFrame, ExitMode, DealConfig
+from trades_storage import TradesStorage
 from utils import timeframe_to_sec
 
 
 class MarketDataAnalyzer:
-    def __init__(self, config: GPConfig):
+    def __init__(self, config: DealConfig, storage: TradesStorage):
         self._config = config
+        self._storage = storage
 
     @cached_property
     def min_timeframe(self) -> TimeFrame:
@@ -23,4 +24,3 @@ class MarketDataAnalyzer:
         cur_time = int(time.time())
         next_tf = cur_time // tf * tf + tf
         await asyncio.sleep(next_tf - cur_time)
-

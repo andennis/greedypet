@@ -9,24 +9,25 @@ market:
   type: spot
   symbol: BTC/USDT
 
-trade_algorithm: long
+deal:
+  trade_algorithm: long
 
-entry_condition:
-  filters:
-    - type: BB
-      time_frame: 5m
-      periods: 20
-      moving_average: sma
-
-exit_condition:
-  mode: signal
-  signal:
+  entry_condition:
     filters:
       - type: BB
-        time_frame: 15m
-      - type: RSI
-        time_frame: 15m
-        condition:
-          operator: gt
-          value: 70
-    pnl: 2
+        time_frame: 5m
+        periods: 20
+        moving_average: sma
+
+  exit_condition:
+    mode: signal
+    signal:
+      filters:
+        - type: BB
+          time_frame: 15m
+        - type: RSI
+          time_frame: 15m
+          condition:
+            operator: gt
+            value: 70
+      pnl: 2

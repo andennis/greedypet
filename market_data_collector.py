@@ -39,9 +39,9 @@ class MarketDataCollector:
                 Each float list contains the following six elements:
                     [timestamp (milliseconds), open, high, low, close, volume]
         """
-        filters = self._config.entry_condition.filters
-        if self._config.exit_condition.mode == ExitMode.SIGNAL:
-            filters.extend(self._config.exit_condition.signal.filters)
+        filters = self._config.deal.entry_condition.filters
+        if self._config.deal.exit_condition.mode == ExitMode.SIGNAL:
+            filters.extend(self._config.deal.exit_condition.signal.filters)
 
         timeframe_map = self._get_max_timeframes_len(filters)
 

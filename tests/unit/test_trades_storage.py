@@ -8,16 +8,6 @@ from entities import StorageConfig, TimeFrame, Trade, TradeSide
 
 
 @pytest.fixture
-def symbol():
-    return "BTC/USDT"
-
-
-@pytest.fixture
-def trades_storage(symbol: str):
-    return TradesStorage(StorageConfig(), symbol)
-
-
-@pytest.fixture
 def ohlcv_data_30m():
     return [
         [1729535400000, 67012.8, 67012.8, 66686.93, 66999.28, 0.061758],

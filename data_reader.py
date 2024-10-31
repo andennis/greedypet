@@ -1,6 +1,6 @@
 import os
 import ccxt.pro as ccxt
-from entities import TimeFrame, Exchange, Trade, TradeSide, TradingMode
+from entities import TimeFrame, Exchange, Trade, TradeSide, TradingMode, OhlcvData
 
 
 class ExchangeDataReader:
@@ -23,7 +23,7 @@ class ExchangeDataReader:
 
     async def read_ohlcv_data(
         self, symbol: str, time_frame: TimeFrame, limit: int
-    ) -> list[list[float]]:
+    ) -> OhlcvData:
         """
         :param symbol:
         :param time_frame:
