@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, AsyncMock
-from data_reader import ExchangeDataReader
+from exchange_data_reader import ExchangeDataReader
 from entities import Exchange, ExchangeId, TimeFrame, Trade, TradeSide
 
 

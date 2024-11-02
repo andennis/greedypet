@@ -1,7 +1,7 @@
 import pytest_asyncio
 from entities import Exchange, ExchangeId, TradingMode
 from dotenv import load_dotenv
-from data_reader import ExchangeDataReader
+from exchange_data_reader import ExchangeDataReader
 
 load_dotenv()
 

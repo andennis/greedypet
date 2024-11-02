@@ -4,7 +4,7 @@
 # GP_API_SECRET=<your secret>
 #
 import pytest
-from data_reader import ExchangeDataReader
+from exchange_data_reader import ExchangeDataReader
 from entities import TimeFrame
 
 

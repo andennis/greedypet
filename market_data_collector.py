@@ -1,5 +1,5 @@
 from collections import defaultdict
-from data_reader import ExchangeDataReader
+from exchange_data_reader import ExchangeDataReader
 from entities import ExitMode, TimeFrame, Filter, Trade, OhlcvData
 from gp_config import GPConfig
 from filters import filter_factory
