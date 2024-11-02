@@ -52,6 +52,15 @@ def test_get_latest_timeframes(trades_storage: TradesStorage, ohlcv_data_30m):
     assert df.index[0] == pd.Timestamp(ohlcv_data_30m[4][0], unit="ms")
 
 
+def test_get_latest_timeframes_failed(trades_storage: TradesStorage, ohlcv_data_30m):
+    with pytest.raises(GeneralAppException):
+        trades_storage.get_latest_timeframes(TimeFrame.TF_5M, 1)
+
+    trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
+    with pytest.raises(GeneralAppException):
+        trades_storage.get_latest_timeframes(TimeFrame.TF_5M, 1)
+
+
 @pytest.mark.parametrize(
     "new_price, param_changed", [(67012, ""), (67013, "high"), (66912, "low")]
 )
