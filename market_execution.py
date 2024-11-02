@@ -49,7 +49,7 @@ async def tracking_trade_signals(config: GPConfig):
     logger.info("Trade signals tracking started")
     try:
         trade_storage = _get_trade_storage(config)
-        data_analyzer = MarketDataAnalyzer(config)
+        data_analyzer = MarketDataAnalyzer(config.deal, trade_storage)
         while True:
             logger.info("Track trade signals")
             await data_analyzer.sleep_to_next_timeframe()

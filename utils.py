@@ -1,3 +1,5 @@
+import pytest
+
 from entities import TimeFrame
 from exceptions import NotSupported
 
@@ -26,3 +28,22 @@ def timeframe_to_sec(time_frame: TimeFrame) -> int:
         raise NotSupported(f"Time frame unit {unit} is not supported")
 
     return amount * scale
+
+
+def get_closed_timeframes(timestamp: int) -> list[TimeFrame]:
+    """
+    Return all the timeframes that corresponds tp the specified timestamp.
+    The permissible error of passed timestamp relatively to timeframe timestamp must be less than 1 seconds
+    Args:
+        timestamp (int): timestamp in seconds
+    Return:
+        list[TimeFrame]: list of timeframes corresponding to the specified timestamp
+    """
+    result = []
+    for tf in TimeFrame:
+        tf_size = timeframe_to_sec(tf)
+        tf_ts = timestamp // tf_size * tf_size
+        if abs(tf_ts - timestamp) < 1 or abs(tf_ts + tf_size - timestamp) < 1:
+            result.append(tf)
+
+    return result
