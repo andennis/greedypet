@@ -1,19 +1,15 @@
 from .base_filter import BaseFilter
-from entities import Filter, MovingAverageType
+from entities import FilterConfig, FilterType, TradeAlgorithm
 
 
 class BollingerBendsFilter(BaseFilter):
+    _FILTER_TYPE = FilterType.BOLLINGER_BENDS
     _DEF_PERIODS = 20
 
-    def __init__(self, filter_config: Filter):
-        super().__init__(filter_config)
-        self._periods = filter_config.periods or self._DEF_PERIODS
-        self._moving_average = filter_config.moving_average or MovingAverageType.SMA
+    def __init__(self, config: FilterConfig, trade_algorithm: TradeAlgorithm):
+        super().__init__(config, trade_algorithm)
+        self._periods = config.periods or self._DEF_PERIODS
 
     @property
     def periods(self):
         return self._periods
-
-    @property
-    def moving_average(self) -> MovingAverageType:
-        return self._moving_average

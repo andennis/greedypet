@@ -1,14 +1,14 @@
-from entities import FilterType, Filter, TimeFrame
+from entities import FilterConfig, TimeFrame, TradeAlgorithm
 
 
 class BaseFilter:
-    def __init__(self, filter_config: Filter):
-        self._type = filter_config.type
-        self._time_frame = filter_config.time_frame
+    # The FilterType must be assigned in derivative class
+    _FILTER_TYPE = None
 
-    @property
-    def filter_type(self) -> FilterType:
-        return self._type
+    def __init__(self, config: FilterConfig, trade_algorithm: TradeAlgorithm):
+        self._time_frame = config.time_frame
+        self._trade_algorithm = trade_algorithm
+        self._latest_timestamp = None
 
     @property
     def time_frame(self) -> TimeFrame:
@@ -21,3 +21,11 @@ class BaseFilter:
     @property
     def all_periods(self) -> list[int]:
         return [self.periods]
+
+    @property
+    def is_signal(self) -> bool:
+        raise NotImplementedError
+
+    def apply(self, timestamp: int) -> None:
+        raise NotImplementedError
+    

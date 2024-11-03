@@ -1,13 +1,14 @@
 from .base_filter import BaseFilter
-from entities import Filter
+from entities import FilterConfig, FilterType, TradeAlgorithm
 
 
 class RSIFilter(BaseFilter):
+    _FILTER_TYPE = FilterType.RSI
     _DEF_PERIODS = 14
 
-    def __init__(self, filter_config: Filter):
-        super().__init__(filter_config)
-        self._periods = filter_config.periods or self._DEF_PERIODS
+    def __init__(self, config: FilterConfig, trade_algorithm: TradeAlgorithm):
+        super().__init__(config, trade_algorithm)
+        self._periods = config.periods or self._DEF_PERIODS
 
     @property
     def periods(self):

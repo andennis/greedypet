@@ -51,7 +51,7 @@ async def tracking_trade_signals(config: GPConfig):
         trade_storage = _get_trade_storage(config)
         data_analyzer = MarketDataAnalyzer(config.deal, trade_storage)
         while True:
-            logger.info("Track trade signals")
+            logger.info("Wait for next timeframe")
             await data_analyzer.sleep_to_next_timeframe()
     except asyncio.CancelledError:
         logger.info("Trade signals tracking finished")

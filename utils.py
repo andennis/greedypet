@@ -1,5 +1,4 @@
-import pytest
-
+import time
 from entities import TimeFrame
 from exceptions import NotSupported
 
@@ -16,16 +15,17 @@ from exceptions import NotSupported
 def timeframe_to_sec(time_frame: TimeFrame) -> int:
     amount = int(time_frame.value[0:-1])
     unit = time_frame.value[-1]
-    if "w" == unit:
-        scale = 60 * 60 * 24 * 7
-    elif "d" == unit:
-        scale = 60 * 60 * 24
-    elif "h" == unit:
-        scale = 60 * 60
-    elif "m" == unit:
-        scale = 60
-    else:
-        raise NotSupported(f"Time frame unit {unit} is not supported")
+    match unit:
+        case "w":
+            scale = 60 * 60 * 24 * 7
+        case "d":
+            scale = 60 * 60 * 24
+        case "h":
+            scale = 60 * 60
+        case "m":
+            scale = 60
+        case _:
+            raise NotSupported(f"Time frame unit {unit} is not supported")
 
     return amount * scale
 
@@ -42,7 +42,23 @@ def get_closed_timeframes(timestamp: int) -> list[TimeFrame]:
     for tf in TimeFrame:
         tf_size = timeframe_to_sec(tf)
         tf_ts = timestamp // tf_size * tf_size
-        if abs(tf_ts - timestamp) < 1 or abs(tf_ts + tf_size - timestamp) < 1:
+        if timestamp - tf_ts < 1 or tf_ts + tf_size - timestamp < 1:
             result.append(tf)
 
     return result
+
+
+def time_to_next_timeframe(timeframe: TimeFrame) -> int:
+    """
+    Calculate the number of seconds from current timestamp to the beginning of next timeframe
+    for specified timeframe type (size).
+
+    Args:
+        timeframe (TimeFrame): the timeframe type
+    Returns
+        int:
+    """
+    tf = timeframe_to_sec(timeframe)
+    cur_time = int(time.time())
+    next_tf = cur_time // tf * tf + tf
+    return next_tf - cur_time

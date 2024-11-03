@@ -1,15 +1,34 @@
-import time
 import asyncio
 from functools import cached_property
+
+from black.trans import defaultdict
+
 from entities import TimeFrame, ExitMode, DealConfig
 from trades_storage import TradesStorage
-from utils import timeframe_to_sec
+from utils import timeframe_to_sec, time_to_next_timeframe
 
 
 class MarketDataAnalyzer:
     def __init__(self, config: DealConfig, storage: TradesStorage):
         self._config = config
         self._storage = storage
+
+    @cached_property
+    def timeframe_entrance_filters(self):
+        result = defaultdict(list)
+        for flt in self._config.entry_condition.filters:
+            result[flt.time_frame].append(flt)
+
+        return result
+
+    @cached_property
+    def timeframe_exit_filters(self):
+        result = defaultdict(list)
+        if self._config.exit_condition.mode == ExitMode.SIGNAL:
+            for flt in self._config.exit_condition.signal.filters:
+                result[flt.time_frame].append(flt)
+
+        return result
 
     @cached_property
     def min_timeframe(self) -> TimeFrame:
@@ -25,7 +44,5 @@ class MarketDataAnalyzer:
         return min_tf1
 
     async def sleep_to_next_timeframe(self):
-        tf = timeframe_to_sec(self.min_timeframe)
-        cur_time = int(time.time())
-        next_tf = cur_time // tf * tf + tf
-        await asyncio.sleep(next_tf - cur_time)
+        sleep_interval = time_to_next_timeframe(self.min_timeframe)
+        await asyncio.sleep(sleep_interval)

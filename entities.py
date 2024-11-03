@@ -1,4 +1,7 @@
-from pydantic import BaseModel, Field
+from signal import signal
+
+from pydantic import BaseModel, Field, model_validator
+from typing_extensions import Self
 from enum import Enum, IntEnum
 from dataclasses import dataclass
 
@@ -76,7 +79,7 @@ class MovingAverageType(str, Enum):
     EMA = "ema"
 
 
-class Filter(BaseModel):
+class FilterConfig(BaseModel):
     type: FilterType
     time_frame: TimeFrame
     periods: int | None = Field(gt=0, default=None)
@@ -84,31 +87,43 @@ class Filter(BaseModel):
     condition: FilterCondition | None = None
 
 
-class EntryCondition(BaseModel):
-    filters: list[Filter]
+class DealEntryConfig(BaseModel):
+    filters: list[FilterConfig]
 
 
 class ExitSignal(BaseModel):
-    filters: list[Filter]
+    filters: list[FilterConfig] = []
     pnl: float | None = Field(ge=-100, le=100, default=None)
 
 
-class ExitCondition(BaseModel):
+class DealExitConfig(BaseModel):
     mode: ExitMode
-    signal: ExitSignal
+    signal: ExitSignal | None = None
+
+    @model_validator(mode='after')
+    def signa_validator(self) -> Self:
+        if self.mode == ExitMode.SIGNAL:
+            if self.signal is None:
+                raise ValueError(f"The field <signal> must be set for the mode {self.mode}")
+        return self
 
 
 class DealConfig(BaseModel):
     trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
-    entry_condition: EntryCondition
-    exit_condition: ExitCondition
+    entry_condition: DealEntryConfig
+    exit_condition: DealExitConfig
+
+
+class DealMode(Enum):
+    ENTRANCE = 1
+    EXIT = 2
 
 
 class StorageConfig(BaseModel):
     pass
 
 
-class TradeSide(IntEnum):
+class TradeSide(Enum):
     BUY = 1
     SELL = 2
 

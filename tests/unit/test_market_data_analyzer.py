@@ -62,32 +62,20 @@ def test_min_timeframe(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "cur_time, time_frame, sleep_time", [
-        (600, TimeFrame.TF_1M, 60),
-        (601, TimeFrame.TF_1M, 59),
-        (659, TimeFrame.TF_1M, 1),
-        (600, TimeFrame.TF_5M, 5 * 60),
-        (600 + 150, TimeFrame.TF_5M, 5 * 60 - 150),
-        (3600, TimeFrame.TF_15M, 15 * 60),
-        (3600 + 600, TimeFrame.TF_15M, 15 * 60 - 600),
-    ]
-)
 @patch(
     "market_data_analyzer.MarketDataAnalyzer.min_timeframe", new_callable=PropertyMock
 )
 @patch("market_data_analyzer.asyncio.sleep")
-@patch("market_data_analyzer.time.time")
+@patch("market_data_analyzer.time_to_next_timeframe")
 async def test_sleep_to_next_timeframe(
-    mock_time,
+    mock_time_to_next_timeframe,
     mock_sleep,
     mock_min_timeframe,
     data_analyzer,
-    cur_time: int,
-    time_frame: TimeFrame,
-    sleep_time: int,
 ):
-    mock_min_timeframe.return_value = time_frame
-    mock_time.return_value = cur_time
+    mock_min_timeframe.return_value = TimeFrame.TF_5M
+    mock_time_to_next_timeframe.return_value = 15
     await data_analyzer.sleep_to_next_timeframe()
-    mock_sleep.assert_awaited_once_with(sleep_time)
+    mock_time_to_next_timeframe.assert_called_once_with(TimeFrame.TF_5M)
+    mock_sleep.assert_awaited_once_with(15)
+

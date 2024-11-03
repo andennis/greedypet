@@ -1,4 +1,6 @@
 from unittest.mock import patch, mock_open
+import pytest
+
 from gp_config import load_config
 from entities import (
     ExchangeId,
@@ -9,7 +11,7 @@ from entities import (
     ExitMode,
     ConditionOperator,
     MovingAverageType,
-    TradingMode,
+    TradingMode, DealExitConfig,
 )
 
 
@@ -87,3 +89,8 @@ def test_load_config():
             == ConditionOperator.GT
         )
         assert config.deal.exit_condition.signal.filters[1].condition.value == 70
+
+
+def test_exit_condition_validator():
+    with pytest.raises(ValueError):
+        DealExitConfig(mode=ExitMode.SIGNAL, signal=None)

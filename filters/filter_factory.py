@@ -1,4 +1,4 @@
-from entities import FilterType, Filter
+from entities import FilterType, FilterConfig, TradeAlgorithm
 from .base_filter import BaseFilter
 from .rsi_filter import RSIFilter
 from .bollinger_bends_filter import BollingerBendsFilter
@@ -10,5 +10,5 @@ filter_map = {
 }
 
 
-def create_filter(filter_config: Filter) -> BaseFilter:
-    return filter_map[filter_config.type](filter_config)
+def create_filter(filter_config: FilterConfig, trade_algorithm: TradeAlgorithm) -> BaseFilter:
+    return filter_map[filter_config.type](filter_config, trade_algorithm)

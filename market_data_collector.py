@@ -1,6 +1,6 @@
 from collections import defaultdict
 from exchange_data_reader import ExchangeDataReader
-from entities import ExitMode, TimeFrame, Filter, Trade, OhlcvData
+from entities import ExitMode, TimeFrame, FilterConfig, Trade, OhlcvData
 from gp_config import GPConfig
 from filters import filter_factory
 
@@ -11,11 +11,11 @@ class MarketDataCollector:
         self._reader = ExchangeDataReader(config.exchange)
 
     @staticmethod
-    def _get_max_timeframes_len(filters: list[Filter]) -> dict[TimeFrame, int]:
+    def _get_max_timeframes_len(filters: list[FilterConfig]) -> dict[TimeFrame, int]:
         """
         Retrieve from filters all the time frames and their max length required by the filter
         Args:
-            filters (list[Filter]): list of filters
+            filters (list[FilterConfig]): list of filters
         Returns:
             dict[TimeFrame, int]: dict of time frames (TimeFrame) mapped to number of the time frames periods
         """
