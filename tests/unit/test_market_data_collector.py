@@ -50,7 +50,7 @@ def data_collector(app_config):
 
 
 @pytest.mark.asyncio
-@patch("data_reader.ExchangeDataReader.read_ohlcv_data")
+@patch("exchange_data_reader.ExchangeDataReader.read_ohlcv_data")
 async def test_collect_initial_data(mock_read_ohlcv_data, data_collector, app_config):
     mock_read_ohlcv_data.return_value = [[x for x in range(6)]]
     data = await data_collector.collect_initial_data()
@@ -68,7 +68,7 @@ async def test_collect_initial_data(mock_read_ohlcv_data, data_collector, app_co
 
 
 @pytest.mark.asyncio
-@patch("data_reader.ExchangeDataReader.read_latest_trades")
+@patch("exchange_data_reader.ExchangeDataReader.read_latest_trades")
 async def test_collect_trades(mock_read_latest_trades: AsyncMock, data_collector):
     trade = Trade(side=TradeSide.BUY, price=1, amount=1, timestamp=123)
     mock_read_latest_trades.return_value = [trade]
@@ -81,7 +81,7 @@ async def test_collect_trades(mock_read_latest_trades: AsyncMock, data_collector
 
 
 @pytest.mark.asyncio
-@patch("data_reader.ExchangeDataReader.close")
+@patch("exchange_data_reader.ExchangeDataReader.close")
 async def test_close(mock_close: AsyncMock, data_collector):
     await data_collector.close()
     mock_close.assert_awaited_once()
