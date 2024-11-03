@@ -32,8 +32,7 @@ def timeframe_to_sec(time_frame: TimeFrame) -> int:
 
 def get_closed_timeframes(timestamp: int) -> list[TimeFrame]:
     """
-    Return all the timeframes that corresponds tp the specified timestamp.
-    The permissible error of passed timestamp relatively to timeframe timestamp must be less than 1 seconds
+    The function returns all the timeframes closed at specified timestamp with permissible error at most 1 second.
     Args:
         timestamp (int): timestamp in seconds
     Return:

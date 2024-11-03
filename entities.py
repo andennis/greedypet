@@ -6,25 +6,25 @@ from dataclasses import dataclass
 OhlcvData = list[list[float]]
 
 
-class ExchangeId(str, Enum):
+class ExchangeId(Enum):
     BYBIT = "bybit"
 
 
-class MarketType(str, Enum):
+class MarketType(Enum):
     SPOT = "spot"
 
 
-class TradeAlgorithm(str, Enum):
+class TradeAlgorithm(Enum):
     LONG = "long"
     SHORT = "short"
 
 
-class FilterType(str, Enum):
+class FilterType(Enum):
     BOLLINGER_BENDS = "BB"
     RSI = "RSI"
 
 
-class TimeFrame(str, Enum):
+class TimeFrame(Enum):
     TF_1M = "1m"
     TF_3M = "3m"
     TF_5M = "5m"
@@ -39,16 +39,16 @@ class TimeFrame(str, Enum):
     TF_1W = "1w"
 
 
-class ConditionOperator(str, Enum):
+class ConditionOperator(Enum):
     GT = "gt"
     LT = "lt"
 
 
-class ExitMode(str, Enum):
+class ExitMode(Enum):
     SIGNAL = "signal"
 
 
-class TradingMode(str, Enum):
+class TradingMode(Enum):
     SANDBOX = "sandbox"
     DEMO = "demo"
     REAL = "real"
