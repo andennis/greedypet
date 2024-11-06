@@ -72,11 +72,13 @@ class TradesStorage:
             if trade.timestamp > dfd.latest_trade_timestamp:
                 dfd.latest_trade_timestamp = trade.timestamp
 
-    def get_latest_timeframes(
+    def get_latest_periods(
         self, time_frame: TimeFrame, limit: int | None = None
     ) -> DataFrame:
         if time_frame not in self._data:
             raise GeneralAppException(f"Timeframe {time_frame} does not exist")
 
         df = self._data[time_frame].data
-        return df.tail(limit) if limit else df
+        if not limit or limit == len(df):
+            return df
+        return df.tail(limit)

@@ -2,7 +2,12 @@ from unittest.mock import patch
 import pytest
 from datetime import datetime
 from entities import TimeFrame
-from utils import timeframe_to_sec, get_closed_timeframes, time_to_next_timeframe
+from utils import (
+    timeframe_to_sec,
+    get_closed_timeframes,
+    time_to_next_timeframe,
+    current_time_to_timeframe_time,
+)
 
 
 @pytest.mark.parametrize(
@@ -69,7 +74,7 @@ def test_get_closed_timeframes(timestamp: int, time_frames: list[TimeFrame]):
         (3600 + 600, TimeFrame.TF_15M, 15 * 60 - 600),
     ],
 )
-@patch("market_data_analyzer.time.time")
+@patch("utils.time.time")
 def test_sleep_to_next_timeframe(
     mock_time,
     cur_time: int,
@@ -78,3 +83,19 @@ def test_sleep_to_next_timeframe(
 ):
     mock_time.return_value = cur_time
     assert time_to_next_timeframe(time_frame) == result
+
+
+@pytest.mark.parametrize("cur_time, time_frame, result", [
+    (600, TimeFrame.TF_5M, 600),
+    (600.9, TimeFrame.TF_5M, 600),
+    (599.1, TimeFrame.TF_5M, 600)
+])
+@patch("utils.time.time")
+def test_current_time_to_timeframe_time(
+    mock_time,
+    cur_time: int,
+    time_frame: TimeFrame,
+    result: int,
+):
+    mock_time.return_value = cur_time
+    assert current_time_to_timeframe_time(time_frame) == result

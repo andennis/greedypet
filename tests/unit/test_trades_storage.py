@@ -43,22 +43,22 @@ def test_upload_initial_ohlcv_data_wrong_data(trades_storage: TradesStorage, dat
         trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, data)
 
 
-def test_get_latest_timeframes(trades_storage: TradesStorage, ohlcv_data_30m):
+def test_get_latest_periods(trades_storage: TradesStorage, ohlcv_data_30m):
     trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
-    df = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, 1)
+    df = trades_storage.get_latest_periods(TimeFrame.TF_30M, 1)
     assert df is not None
     assert len(df) == 1
     assert df.iloc[0].values.flatten().tolist() == ohlcv_data_30m[4][1:]
     assert df.index[0] == pd.Timestamp(ohlcv_data_30m[4][0], unit="ms")
 
 
-def test_get_latest_timeframes_failed(trades_storage: TradesStorage, ohlcv_data_30m):
+def test_get_latest_periods_failed(trades_storage: TradesStorage, ohlcv_data_30m):
     with pytest.raises(GeneralAppException):
-        trades_storage.get_latest_timeframes(TimeFrame.TF_5M, 1)
+        trades_storage.get_latest_periods(TimeFrame.TF_5M, 1)
 
     trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
     with pytest.raises(GeneralAppException):
-        trades_storage.get_latest_timeframes(TimeFrame.TF_5M, 1)
+        trades_storage.get_latest_periods(TimeFrame.TF_5M, 1)
 
 
 @pytest.mark.parametrize(
@@ -69,7 +69,7 @@ def test_add_trade_into_latest_timeframe(
 ):
     data = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
     # [1729542600000, 67012.8, 67012.8, 66912.28, 67012.8, 0.003]
-    saved_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1).copy()
+    saved_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1).copy()
 
     trade = Trade(
         side=TradeSide.BUY,
@@ -81,7 +81,7 @@ def test_add_trade_into_latest_timeframe(
         * 1000,
     )
     trades_storage.add_trade(trade)
-    last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
+    last_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1)
 
     stf = saved_tf.iloc[-1]
     ltf = last_tf.iloc[-1]
@@ -100,7 +100,7 @@ def test_add_trades_into_latest_timeframe(
 ):
     data = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
     # [1729542600000, 67012.8, 67012.8, 66912.28, 67012.8, 0.003]
-    saved_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1).copy()
+    saved_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1).copy()
 
     latest_ts = data.index[-1].timestamp() * 1000
     for price in [67000, 68000, 66000, 66100, 66101]:
@@ -108,7 +108,7 @@ def test_add_trades_into_latest_timeframe(
         trade = Trade(side=TradeSide.BUY, price=price, amount=0.01, timestamp=latest_ts)
         trades_storage.add_trade(trade)
 
-    last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
+    last_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1)
 
     stf = saved_tf.iloc[-1]
     ltf = last_tf.iloc[-1]
@@ -121,7 +121,7 @@ def test_add_trades_into_latest_timeframe(
 
 def test_add_trade_into_new_timeframe(trades_storage: TradesStorage, ohlcv_data_30m):
     data = trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, ohlcv_data_30m)
-    saved_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1).copy()
+    saved_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1).copy()
 
     latest_ts = (
         data.index[-1].timestamp() + datetime.timedelta(minutes=31).total_seconds()
@@ -129,7 +129,7 @@ def test_add_trade_into_new_timeframe(trades_storage: TradesStorage, ohlcv_data_
     trade = Trade(side=TradeSide.BUY, price=6700, amount=0.01, timestamp=latest_ts)
     trades_storage.add_trade(trade)
 
-    last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
+    last_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1)
     stf = saved_tf.iloc[-1]
     ltf = last_tf.iloc[-1]
     assert ltf.open == stf.close
@@ -201,7 +201,7 @@ def test_add_trade_with_earlier_timestamp(
     trades_storage.add_trade(trade)
 
     # THEN
-    last_tf = trades_storage.get_latest_timeframes(TimeFrame.TF_30M, limit=1)
+    last_tf = trades_storage.get_latest_periods(TimeFrame.TF_30M, limit=1)
     ltf = last_tf.iloc[-1]
     assert ltf.high == expected_high
     assert ltf.low == expected_low

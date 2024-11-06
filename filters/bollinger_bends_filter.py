@@ -1,9 +1,8 @@
 from .base_filter import BaseFilter
-from entities import FilterConfig, FilterType, TradeAlgorithm
+from entities import FilterConfig, TradeAlgorithm
 
 
 class BollingerBendsFilter(BaseFilter):
-    _FILTER_TYPE = FilterType.BOLLINGER_BENDS
     _DEF_PERIODS = 20
 
     def __init__(self, config: FilterConfig, trade_algorithm: TradeAlgorithm):

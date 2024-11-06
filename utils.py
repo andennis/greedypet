@@ -62,3 +62,10 @@ def time_to_next_timeframe(timeframe: TimeFrame) -> int:
     cur_time = int(time.time())
     next_tf = cur_time // tf * tf + tf
     return next_tf - cur_time
+
+
+def current_time_to_timeframe_time(timeframe: TimeFrame) -> int:
+    tf = timeframe_to_sec(timeframe)
+    cur_time = int(time.time())
+    tf_ts = cur_time // tf * tf
+    return tf_ts + (tf if cur_time - tf_ts > 1 else 0)

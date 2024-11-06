@@ -28,3 +28,9 @@ class BaseDealTracker:
         sleep_interval = time_to_next_timeframe(self.min_timeframe)
         await asyncio.sleep(sleep_interval)
 
+    def apply_filters(self, timestamp: int):
+        for tf, filters in self.timeframe_filters.items():
+            df = self._storage.get_latest_periods(tf)
+            for flt in filters:
+                flt.check(timestamp, df)
+

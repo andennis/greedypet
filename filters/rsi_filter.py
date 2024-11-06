@@ -1,9 +1,8 @@
 from .base_filter import BaseFilter
-from entities import FilterConfig, FilterType, TradeAlgorithm
+from entities import FilterConfig, IndicatorType, TradeAlgorithm
 
 
 class RSIFilter(BaseFilter):
-    _FILTER_TYPE = FilterType.RSI
     _DEF_PERIODS = 14
 
     def __init__(self, config: FilterConfig, trade_algorithm: TradeAlgorithm):

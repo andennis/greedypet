@@ -1,10 +1,7 @@
-from signal import signal
-
 from pydantic import BaseModel, Field, model_validator
 from typing_extensions import Self
-from enum import Enum, IntEnum
+from enum import Enum
 from dataclasses import dataclass
-
 
 OhlcvData = list[list[float]]
 
@@ -22,7 +19,7 @@ class TradeAlgorithm(Enum):
     SHORT = "short"
 
 
-class FilterType(Enum):
+class IndicatorType(Enum):
     BOLLINGER_BENDS = "BB"
     RSI = "RSI"
 
@@ -48,6 +45,8 @@ class ConditionOperator(Enum):
 
 
 class ExitMode(Enum):
+    PROFIT = "profit",
+    MULTI_TAKE = "multi-take"
     SIGNAL = "signal"
 
 
@@ -69,21 +68,25 @@ class ExchangeMarket(BaseModel):
     symbol: str
 
 
+class StorageConfig(BaseModel):
+    pass
+
+
 class FilterCondition(BaseModel):
     operator: ConditionOperator
     value: float
 
 
-class MovingAverageType(str, Enum):
+class MovingAverageType(Enum):
     SMA = "sma"
     EMA = "ema"
 
 
 class FilterConfig(BaseModel):
-    type: FilterType
+    indicator: IndicatorType
     time_frame: TimeFrame
-    periods: int | None = Field(gt=0, default=None)
-    moving_average: MovingAverageType | None = None
+    # periods: int | None = Field(gt=0, default=None)
+    # moving_average: MovingAverageType | None = None
     condition: FilterCondition | None = None
 
 
@@ -91,14 +94,14 @@ class DealEntryConfig(BaseModel):
     filters: list[FilterConfig]
 
 
-class ExitSignal(BaseModel):
+class ExitSignalConfig(BaseModel):
     filters: list[FilterConfig] = []
     pnl: float | None = Field(ge=-100, le=100, default=None)
 
 
 class DealExitConfig(BaseModel):
     mode: ExitMode
-    signal: ExitSignal | None = None
+    signal: ExitSignalConfig | None = None
 
     @model_validator(mode='after')
     def signa_validator(self) -> Self:
@@ -114,13 +117,25 @@ class DealConfig(BaseModel):
     exit_condition: DealExitConfig
 
 
-class DealMode(Enum):
-    ENTRANCE = 1
-    EXIT = 2
+class DealState(Enum):
+    LOOK_FOR_ENTRY_POINT = 1
+    IN_DEAL = 2
 
 
-class StorageConfig(BaseModel):
+class DealEntryCondition(BaseModel):
     pass
+
+
+class DealExitCondition(BaseModel):
+    pass
+
+
+class Deal(BaseModel):
+    algorithm: TradeAlgorithm
+    state: DealState = DealState.LOOK_FOR_ENTRY_POINT
+    deal_average_price: float | None = None
+    entry_condition: DealEntryCondition
+    exit_condition: DealExitCondition
 
 
 class TradeSide(Enum):
