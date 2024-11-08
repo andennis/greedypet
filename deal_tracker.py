@@ -4,7 +4,7 @@ from functools import cached_property
 from entities import TimeFrame, TradeAlgorithm
 from filters.base_filter import BaseFilter
 from trades_storage import TradesStorage
-from utils import time_to_next_timeframe
+from utils import get_time_to_next_timeframe
 
 
 class BaseDealTracker:
@@ -25,7 +25,7 @@ class BaseDealTracker:
         raise NotImplementedError
 
     async def sleep_to_next_timeframe(self):
-        sleep_interval = time_to_next_timeframe(self.min_timeframe)
+        sleep_interval = get_time_to_next_timeframe(self.min_timeframe)
         await asyncio.sleep(sleep_interval)
 
     def apply_filters(self, timestamp: int):

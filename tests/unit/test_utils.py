@@ -1,11 +1,10 @@
 from unittest.mock import patch
 import pytest
-from datetime import datetime
 from entities import TimeFrame
 from utils import (
     timeframe_to_sec,
     get_closed_timeframes,
-    time_to_next_timeframe,
+    get_time_to_next_timeframe,
     current_time_to_timeframe_time,
 )
 
@@ -32,34 +31,42 @@ def test_timeframe_to_sec(time_frame: TimeFrame, seconds: int):
 
 
 @pytest.mark.parametrize(
-    "timestamp, time_frames",
+    "timestamp, delta, time_frames",
     [
-        (660, {TimeFrame.TF_1M}),
-        (660.7, {TimeFrame.TF_1M}),
-        (659.3, {TimeFrame.TF_1M}),
-        (661, set()),
-        (600, {TimeFrame.TF_1M, TimeFrame.TF_5M}),
-        (900, {TimeFrame.TF_1M, TimeFrame.TF_3M, TimeFrame.TF_5M, TimeFrame.TF_15M}),
-        (
-            3600,
-            {
-                TimeFrame.TF_1M,
-                TimeFrame.TF_3M,
-                TimeFrame.TF_5M,
-                TimeFrame.TF_15M,
-                TimeFrame.TF_30M,
-                TimeFrame.TF_1H,
-            },
-        ),
-        (
-            datetime(2024, 11, 2, 5, 45).timestamp(),
-            {TimeFrame.TF_1M, TimeFrame.TF_3M, TimeFrame.TF_5M, TimeFrame.TF_15M},
-        ),
+        (0, 0, []),
+        (1, 0, []),
+
+        (60, 0, [TimeFrame.TF_1M]),
+        (60, 0.1, [TimeFrame.TF_1M]),
+        (60, 0.9, [TimeFrame.TF_1M]),
+        (60, 1, []),
+
+        (300, 0, [TimeFrame.TF_1M, TimeFrame.TF_5M]),
+        (300, 0.5, [TimeFrame.TF_1M, TimeFrame.TF_5M]),
+        (300, 1, [TimeFrame.TF_5M]),
+        (300, 4, [TimeFrame.TF_5M]),
+        (300, 5, []),
+
+        (3600, 61, []),
+        (3600, 60, [TimeFrame.TF_1M]),
+        (3600, 59.5, [TimeFrame.TF_1M, TimeFrame.TF_1H]),
+        (3600, 59, [TimeFrame.TF_1H]),
+        (3600, 30, [TimeFrame.TF_1H]),
+        (3600, 29, [TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 15, [TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 14, [TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 5, [TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 4, [TimeFrame.TF_5M, TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 3, [TimeFrame.TF_5M, TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 2, [TimeFrame.TF_3M, TimeFrame.TF_5M, TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 1, [TimeFrame.TF_3M, TimeFrame.TF_5M, TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H]),
+        (3600, 0, [TimeFrame.TF_1M, TimeFrame.TF_3M, TimeFrame.TF_5M, TimeFrame.TF_15M, TimeFrame.TF_30M, TimeFrame.TF_1H])
     ],
 )
-def test_get_closed_timeframes(timestamp: int, time_frames: list[TimeFrame]):
-    result = get_closed_timeframes(timestamp)
-    assert set(result) == time_frames
+def test_get_closed_timeframes(timestamp: int, delta: float, time_frames: list[TimeFrame]):
+    assert get_closed_timeframes(timestamp + delta) == time_frames
+    if delta != 0:
+        assert get_closed_timeframes(timestamp - delta) == time_frames
 
 
 @pytest.mark.parametrize(
@@ -75,21 +82,24 @@ def test_get_closed_timeframes(timestamp: int, time_frames: list[TimeFrame]):
     ],
 )
 @patch("utils.time.time")
-def test_sleep_to_next_timeframe(
+def test_get_time_to_next_timeframe(
     mock_time,
     cur_time: int,
     time_frame: TimeFrame,
     result: int,
 ):
     mock_time.return_value = cur_time
-    assert time_to_next_timeframe(time_frame) == result
+    assert get_time_to_next_timeframe(time_frame) == result
 
 
-@pytest.mark.parametrize("cur_time, time_frame, result", [
-    (600, TimeFrame.TF_5M, 600),
-    (600.9, TimeFrame.TF_5M, 600),
-    (599.1, TimeFrame.TF_5M, 600)
-])
+@pytest.mark.parametrize(
+    "cur_time, time_frame, result",
+    [
+        (600, TimeFrame.TF_5M, 600),
+        (600.9, TimeFrame.TF_5M, 600),
+        (599.1, TimeFrame.TF_5M, 600),
+    ],
+)
 @patch("utils.time.time")
 def test_current_time_to_timeframe_time(
     mock_time,

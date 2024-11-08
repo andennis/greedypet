@@ -5,7 +5,7 @@ from black.trans import defaultdict
 
 from entities import TimeFrame, ExitMode, DealConfig
 from trades_storage import TradesStorage
-from utils import timeframe_to_sec, time_to_next_timeframe
+from utils import timeframe_to_sec, get_time_to_next_timeframe
 
 
 class MarketDataAnalyzer:
@@ -44,5 +44,5 @@ class MarketDataAnalyzer:
         return min_tf1
 
     async def sleep_to_next_timeframe(self):
-        sleep_interval = time_to_next_timeframe(self.min_timeframe)
+        sleep_interval = get_time_to_next_timeframe(self.min_timeframe)
         await asyncio.sleep(sleep_interval)

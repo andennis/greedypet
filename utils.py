@@ -30,25 +30,29 @@ def timeframe_to_sec(time_frame: TimeFrame) -> int:
     return amount * scale
 
 
-def get_closed_timeframes(timestamp: int) -> list[TimeFrame]:
+def get_closed_timeframes(timestamp: float) -> list[TimeFrame]:
     """
-    The function returns all the timeframes closed at specified timestamp with permissible error at most 1 second.
+    The function returns all the timeframes closed at specified timestamp with permissible error
+    at most 1/60 of timeframe size.
+
     Args:
-        timestamp (int): timestamp in seconds
+        timestamp (float): timestamp in seconds
     Return:
         list[TimeFrame]: list of timeframes corresponding to the specified timestamp
     """
     result = []
     for tf in TimeFrame:
         tf_size = timeframe_to_sec(tf)
-        tf_ts = timestamp // tf_size * tf_size
-        if timestamp - tf_ts < 1 or tf_ts + tf_size - timestamp < 1:
-            result.append(tf)
+        d = tf_size // 60
+        if timestamp > d:
+            tf_ts = timestamp // tf_size * tf_size
+            if timestamp - tf_ts < d or tf_ts + tf_size - timestamp < d:
+                result.append(tf)
 
     return result
 
 
-def time_to_next_timeframe(timeframe: TimeFrame) -> int:
+def get_time_to_next_timeframe(timeframe: TimeFrame) -> int:
     """
     Calculate the number of seconds from current timestamp to the beginning of next timeframe
     for specified timeframe type (size).
@@ -56,7 +60,7 @@ def time_to_next_timeframe(timeframe: TimeFrame) -> int:
     Args:
         timeframe (TimeFrame): the timeframe type
     Returns
-        int:
+        int: number of seconds to the beginning of next timeframe period
     """
     tf = timeframe_to_sec(timeframe)
     cur_time = int(time.time())
@@ -65,6 +69,14 @@ def time_to_next_timeframe(timeframe: TimeFrame) -> int:
 
 
 def current_time_to_timeframe_time(timeframe: TimeFrame) -> int:
+    """
+    Adjust the current time to the open time of nearest timeframe
+
+    Args:
+        timeframe (TimeFrame): the timeframe type
+    Returns:
+        int: open timestamp (in seconds) of the nearest timeframe period
+    """
     tf = timeframe_to_sec(timeframe)
     cur_time = int(time.time())
     tf_ts = cur_time // tf * tf
