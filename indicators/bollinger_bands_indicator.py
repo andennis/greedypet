@@ -1,3 +1,4 @@
+import pandas_ta as ta
 from dataclasses import dataclass
 from entities import TimeFrame
 from exceptions import GeneralAppException
@@ -25,4 +26,6 @@ class BollingerBandsIndicator(BaseIndicator[BollingerBandsResult]):
                 f"to_timestamp {to_timestamp} does not correspond to timeframe {self._timeframe.value}"
             )
         df = self._storage.get_latest_periods(self._timeframe, limit=self._PERIODS)
-        return BollingerBandsResult(0, 0)
+        bb = ta.bbands(df['close'], length=self._PERIODS, std=2)
+        row = bb.iloc[-1]
+        return BollingerBandsResult(upper_value=row["BBU_20_2.0"], lower_value=row["BBL_20_2.0"])
