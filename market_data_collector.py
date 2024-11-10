@@ -48,7 +48,7 @@ class MarketDataCollector:
         result: dict[TimeFrame, OhlcvData] = dict()
         for time_frame, periods in timeframe_map.items():
             result[time_frame] = await self._reader.read_ohlcv_data(
-                self._config.market.symbol, time_frame, periods
+                self._config.market.symbol, time_frame, periods + 1
             )
 
         return result

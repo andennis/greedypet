@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 from pandas import DataFrame
 from dataclasses import dataclass
@@ -73,12 +74,33 @@ class TradesStorage:
                 dfd.latest_trade_timestamp = trade.timestamp
 
     def get_latest_periods(
-        self, time_frame: TimeFrame, limit: int | None = None
+        self, time_frame: TimeFrame, to_timestamp: datetime | None = None, limit: int | None = None
     ) -> DataFrame:
+        """
+        The function returns the latest ohlcv data for specified timeframe.
+        The initial date for the specified timeframe must be preliminarily uploaded
+        by the function upload_initial_ohlcv_data
+
+        Args:
+            time_frame (TimeFrame): the ohlcv data timeframe
+            to_timestamp (datetime): ohlcv data are retrieved up to specified time inclusive.
+                If the parameter is not specified then all data are retrieved
+            limit (int): the number of ohlcv periods to retrieve
+
+        Returns:
+            DataFrame: ohlcv data
+
+        Raises:
+            GeneralAppException: No data was preliminarily uploaded for the specified timeframe.
+            See the function upload_initial_ohlcv_data
+        """
         if time_frame not in self._data:
             raise GeneralAppException(f"Timeframe {time_frame} does not exist")
 
         df = self._data[time_frame].data
+        if to_timestamp:
+            df = df.loc[:to_timestamp]
         if not limit or limit == len(df):
             return df
         return df.tail(limit)
+

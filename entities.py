@@ -74,6 +74,7 @@ class StorageConfig(BaseModel):
 
 class FilterCondition(BaseModel):
     operator: ConditionOperator
+    name: str
     value: float
 
 
@@ -85,8 +86,6 @@ class MovingAverageType(Enum):
 class FilterConfig(BaseModel):
     indicator: IndicatorType
     time_frame: TimeFrame
-    # periods: int | None = Field(gt=0, default=None)
-    # moving_average: MovingAverageType | None = None
     condition: FilterCondition | None = None
 
 

@@ -27,5 +27,5 @@ class BollingerBandsIndicator(BaseIndicator[BollingerBandsResult]):
             )
         df = self._storage.get_latest_periods(self._timeframe, limit=self._PERIODS)
         bb = ta.bbands(df['close'], length=self._PERIODS, std=2)
-        row = bb.iloc[-1]
+        row = bb.iloc[-2]
         return BollingerBandsResult(upper_value=row["BBU_20_2.0"], lower_value=row["BBL_20_2.0"])
