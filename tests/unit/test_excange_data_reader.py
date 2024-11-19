@@ -1,16 +1,16 @@
 import pytest
 from unittest.mock import patch, AsyncMock
 from exchange_data_reader import ExchangeDataReader
-from entities import Exchange, ExchangeId, TimeFrame, Trade, TradeSide
+from entities import ExchangeConfig, ExchangeId, TimeFrame, Trade, TradeSide
 
 
 @pytest.fixture
 def data_reader() -> ExchangeDataReader:
-    return ExchangeDataReader(Exchange(id=ExchangeId.BYBIT))
+    return ExchangeDataReader(ExchangeConfig(id=ExchangeId.BYBIT))
 
 
 def test_data_reader_config():
-    config = Exchange(id=ExchangeId.BYBIT, api_key="key1", api_secret="secret1")
+    config = ExchangeConfig(id=ExchangeId.BYBIT, api_key="key1", api_secret="secret1")
     dr = ExchangeDataReader(config)
     assert dr.exchange.id == "bybit"
     assert dr.exchange.apiKey == "key1"
@@ -21,7 +21,7 @@ def test_data_reader_config():
 def test_data_reader_config_env(monkeypatch):
     monkeypatch.setenv("GP_API_KEY", "key_env")
     monkeypatch.setenv("GP_API_SECRET", "secret_env")
-    config = Exchange(id=ExchangeId.BYBIT, api_key="key1", api_secret="secret1")
+    config = ExchangeConfig(id=ExchangeId.BYBIT, api_key="key1", api_secret="secret1")
     dr = ExchangeDataReader(config)
     assert dr.exchange.apiKey == "key_env"
     assert dr.exchange.secret == "secret_env"

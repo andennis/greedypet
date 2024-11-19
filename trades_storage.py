@@ -19,9 +19,8 @@ class _TimeFrameData:
 class TradesStorage:
     _COLUMNS = ["timestamp", "open", "high", "low", "close", "volume"]
 
-    def __init__(self, config: StorageConfig, symbol: str):
+    def __init__(self, config: StorageConfig):
         self._config = config
-        self._symbol = symbol
         self._data: dict[TimeFrame, _TimeFrameData] = dict()
 
     def upload_initial_ohlcv_data(

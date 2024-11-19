@@ -1,13 +1,13 @@
 import yaml
 import logging
 from pydantic import BaseModel
-from entities import Exchange, ExchangeMarket, DealConfig, StorageConfig
+from entities import ExchangeConfig, ExchangeMarket, DealConfig, StorageConfig
 
 logger = logging.getLogger(__name__)
 
 
 class GPConfig(BaseModel):
-    exchange: Exchange
+    exchange: ExchangeConfig
     market: ExchangeMarket
     deal: DealConfig
     storage: StorageConfig | None = None

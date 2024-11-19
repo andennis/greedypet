@@ -16,9 +16,8 @@ from gp_config import load_config, GPConfig
 logger = logging.getLogger(__name__)
 LOG_LEVELS = list(map(logging.getLevelName, [logging.INFO, logging.DEBUG]))
 
-cwd = pathlib.Path(__file__).parent
-APP_CONFIG_FILE = cwd / "gp_config.yaml"
-LOGGING_CONFIG_FILE = cwd / "gp_logging.yaml"
+APP_CONFIG_FILE = "gp_config.yaml"
+LOGGING_CONFIG_FILE = "gp_logging.yaml"
 
 LOGGING_CONFIG = {
     'version': 1,
@@ -54,10 +53,11 @@ LOGGING_CONFIG = {
 }
 
 
-def _configure_logging():
-    with (open(LOGGING_CONFIG_FILE, "r") as f):
+def _configure_logging(working_dir: pathlib.Path):
+    with (open(str(working_dir / LOGGING_CONFIG_FILE), "r") as f):
         cfg_from_file = yaml.safe_load(f)
         cfg = LOGGING_CONFIG.copy()
+        cfg["handlers"]["file_handler"]["filename"] = str(working_dir / "logs/greedypet.log")
         if cfg_from_file:
             mergedeep.merge(cfg, cfg_from_file)
         logging.config.dictConfig(cfg)
@@ -65,7 +65,7 @@ def _configure_logging():
     logger.info("Logging has been configured")
 
 
-async def run_trades(config: GPConfig):
+async def run_trades(config: GPConfig, working_dir: str):
     def _signal_handler(sig):
         logger.info(f"Trading process is being stopped by {signal.Signals(sig).name} ...")
         asyncio.get_event_loop().remove_signal_handler(sig)
@@ -77,27 +77,31 @@ async def run_trades(config: GPConfig):
         ev_loop.add_signal_handler(_sig, functools.partial(_signal_handler, sig=signal.SIGINT))
 
     tasks = [
-        asyncio.create_task(mexec.reading_market_trades(config)),
-        asyncio.create_task(mexec.tracking_trade_signals(config)),
-        # asyncio.create_task(mexec.making_market_trades(config))
+        asyncio.create_task(mexec.reading_market_trades(config, working_dir)),
+        asyncio.create_task(mexec.tracking_trade_signals(config, working_dir)),
+        # asyncio.create_task(mexec.making_market_trades(config, working_dir))
     ]
     await asyncio.gather(*tasks)
 
 
 @click.command()
 @click.option(
-    "-c",
-    "--config",
-    "config_file",
+    "-w",
+    "--working_dir",
+    "working_dir",
     type=click.Path(exists=True),
-    default=APP_CONFIG_FILE,
+    default="",
 )
-@click.option("-n", "--name", default=f"bot-{os.getpid()}")
-def main(config_file: str, name: str):
-    _configure_logging()
-    config = load_config(config_file)
+@click.option("-n", "--name", default=f"gp-{os.getpid()}")
+def main(working_dir: str, name: str):
+    if working_dir:
+        os.chdir(working_dir)
+    cwd = pathlib.Path(__file__).parent
+
+    _configure_logging(cwd)
+    config = load_config(str(cwd / APP_CONFIG_FILE))
     logger.info(f"Bot {name} started")
-    asyncio.run(run_trades(config))
+    asyncio.run(run_trades(config, str(cwd)))
     logger.info(f"Bot {name} gracefully finished")
 
 

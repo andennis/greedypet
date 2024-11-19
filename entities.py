@@ -56,7 +56,7 @@ class TradingMode(Enum):
     REAL = "real"
 
 
-class Exchange(BaseModel):
+class ExchangeConfig(BaseModel):
     id: ExchangeId
     api_key: str | None = None
     api_secret: str | None = None
@@ -114,27 +114,6 @@ class DealConfig(BaseModel):
     trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
     entry_condition: DealEntryConfig
     exit_condition: DealExitConfig
-
-
-class DealState(Enum):
-    LOOK_FOR_ENTRY_POINT = 1
-    IN_DEAL = 2
-
-
-class DealEntryCondition(BaseModel):
-    pass
-
-
-class DealExitCondition(BaseModel):
-    pass
-
-
-class Deal(BaseModel):
-    algorithm: TradeAlgorithm
-    state: DealState = DealState.LOOK_FOR_ENTRY_POINT
-    deal_average_price: float | None = None
-    entry_condition: DealEntryCondition
-    exit_condition: DealExitCondition
 
 
 class TradeSide(Enum):

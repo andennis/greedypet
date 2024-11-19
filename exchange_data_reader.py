@@ -1,10 +1,10 @@
 import os
 import ccxt.pro as ccxt
-from entities import TimeFrame, Exchange, Trade, TradeSide, TradingMode, OhlcvData
+from entities import TimeFrame, ExchangeConfig, Trade, TradeSide, TradingMode, OhlcvData
 
 
 class ExchangeDataReader:
-    def __init__(self, exchange_config: Exchange):
+    def __init__(self, exchange_config: ExchangeConfig):
         exchange_class = getattr(ccxt, exchange_config.id.value)
         self._exchange = exchange_class(
             {
