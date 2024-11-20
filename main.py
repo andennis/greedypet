@@ -76,10 +76,11 @@ async def run_trades(config: GPConfig, working_dir: str):
     for _sig in [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]:
         ev_loop.add_signal_handler(_sig, functools.partial(_signal_handler, sig=signal.SIGINT))
 
+    mexec.init_market_execution(config, working_dir)
     tasks = [
-        asyncio.create_task(mexec.reading_market_trades(config, working_dir)),
-        asyncio.create_task(mexec.tracking_trade_signals(config, working_dir)),
-        # asyncio.create_task(mexec.making_market_trades(config, working_dir))
+        asyncio.create_task(mexec.reading_market_trades(config)),
+        asyncio.create_task(mexec.tracking_trade_signals(config)),
+        # asyncio.create_task(mexec.making_market_trades(config))
     ]
     await asyncio.gather(*tasks)
 

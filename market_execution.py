@@ -87,14 +87,17 @@ def _save_deal_state(working_dir: str):
         json.dump(data, f)
 
 
-async def reading_market_trades(config: GPConfig, working_dir: str):
-    logger.info("Trades reading started")
-
+def init_market_execution(config: GPConfig, working_dir: str):
     trade_storage = _init_trade_storage(config.storage)
     indicators_pool = _create_indicators_pool(trade_storage)
     _init_deal_state(working_dir, config.deal, indicators_pool)
-    data_collector = MarketDataCollector(config.exchange, indicators_pool)
 
+
+async def reading_market_trades(config: GPConfig):
+    logger.info("Trades reading started")
+
+    trade_storage = _get_trade_storage()
+    data_collector = MarketDataCollector(config.exchange, _get_indicators_pool())
     try:
         # Prepare initial ohlcv data according to filters' demands
         logger.info("Collecting initial data...")
@@ -118,7 +121,7 @@ async def reading_market_trades(config: GPConfig, working_dir: str):
         await data_collector.close()
 
 
-async def tracking_trade_signals(config: GPConfig, working_dir: str):
+async def tracking_trade_signals(config: GPConfig):
     logger.info("Trade signals tracking started")
     try:
         trade_storage = _get_trade_storage()
@@ -130,7 +133,7 @@ async def tracking_trade_signals(config: GPConfig, working_dir: str):
         logger.info("Trade signals tracking finished")
 
 
-async def making_market_trades(config: GPConfig, working_dir: str):
+async def making_market_trades(config: GPConfig):
     logger.info("Trading started")
     try:
         while True:
