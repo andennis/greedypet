@@ -60,11 +60,11 @@ class ExchangeConfig(BaseModel):
     id: ExchangeId
     api_key: str | None = None
     api_secret: str | None = None
-    trading_mode: TradingMode | None = TradingMode.SANDBOX
+    trading_mode: TradingMode = TradingMode.SANDBOX
 
 
 class ExchangeMarket(BaseModel):
-    type: MarketType = MarketType.SPOT
+    type: MarketType
     symbol: str
 
 
@@ -74,19 +74,16 @@ class StorageConfig(BaseModel):
 
 class FilterCondition(BaseModel):
     operator: ConditionOperator
+    # Field name from the Indicator's result structure
     name: str
-    value: float
-
-
-class MovingAverageType(Enum):
-    SMA = "sma"
-    EMA = "ema"
+    # Field value from the Indicator's result structure
+    value: float | None = None
 
 
 class FilterConfig(BaseModel):
     indicator: IndicatorType
-    time_frame: TimeFrame
-    condition: FilterCondition | None = None
+    timeframe: TimeFrame
+    condition: FilterCondition
 
 
 class DealEntryConfig(BaseModel):
@@ -94,8 +91,8 @@ class DealEntryConfig(BaseModel):
 
 
 class ExitSignalConfig(BaseModel):
-    filters: list[FilterConfig] = []
-    pnl: float | None = Field(ge=-100, le=100, default=None)
+    filters: list[FilterConfig] = Field(default_factory=list)
+    pnl: float | None = Field(ge=0, default=None)
 
 
 class DealExitConfig(BaseModel):
@@ -111,7 +108,7 @@ class DealExitConfig(BaseModel):
 
 
 class DealConfig(BaseModel):
-    trade_algorithm: TradeAlgorithm = TradeAlgorithm.LONG
+    trade_algorithm: TradeAlgorithm
     entry_condition: DealEntryConfig
     exit_condition: DealExitConfig
 

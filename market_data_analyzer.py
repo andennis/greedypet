@@ -17,7 +17,7 @@ class MarketDataAnalyzer:
     def timeframe_entrance_filters(self):
         result = defaultdict(list)
         for flt in self._config.entry_condition.filters:
-            result[flt.time_frame].append(flt)
+            result[flt.timeframe].append(flt)
 
         return result
 
@@ -26,17 +26,17 @@ class MarketDataAnalyzer:
         result = defaultdict(list)
         if self._config.exit_condition.mode == ExitMode.SIGNAL:
             for flt in self._config.exit_condition.signal.filters:
-                result[flt.time_frame].append(flt)
+                result[flt.timeframe].append(flt)
 
         return result
 
     @cached_property
     def min_timeframe(self) -> TimeFrame:
         filters = self._config.entry_condition.filters
-        min_tf1 = min(map(lambda x: x.time_frame, filters), key=timeframe_to_sec)
+        min_tf1 = min(map(lambda x: x.timeframe, filters), key=timeframe_to_sec)
         if self._config.exit_condition.mode == ExitMode.SIGNAL:
             min_tf2 = min(
-                map(lambda x: x.time_frame, self._config.exit_condition.signal.filters),
+                map(lambda x: x.timeframe, self._config.exit_condition.signal.filters),
                 key=timeframe_to_sec,
             )
             min_tf1 = min(min_tf1, min_tf2, key=timeframe_to_sec)

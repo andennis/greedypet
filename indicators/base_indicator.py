@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TypeVar, Generic, Type
+from typing import TypeVar, Generic
 from dataclasses import dataclass
 
 from entities import TimeFrame

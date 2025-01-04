@@ -36,7 +36,7 @@ class Deal:
         self._filters.clear()
         for filter_config in filters_config:
             deal_filter = DealFilter(filter_config, self._indicators_pool)
-            self._filters[filter_config.time_frame].append(deal_filter)
+            self._filters[filter_config.timeframe].append(deal_filter)
 
     def _inti_look_entry_state(self):
         self._create_filters(self._config.entry_condition.filters)

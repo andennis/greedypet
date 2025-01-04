@@ -11,7 +11,10 @@ IndicatorsMap = dict[TimeFrame, list[BaseIndicator[type[BaseIndicatorResult]]]]
 
 
 class IndicatorsPool:
-    _INDICATORS_MAP: dict[IndicatorType, type[BaseIndicator]] = {
+    """
+    Indicators pool collects the indicators grouped by timeframe
+    """
+    _INDICATORS_TYPE_MAP: dict[IndicatorType, type[BaseIndicator]] = {
         IndicatorType.BOLLINGER_BENDS: BollingerBandsIndicator
     }
 
@@ -19,9 +22,9 @@ class IndicatorsPool:
         self._storage = storage
         self._pool: IndicatorsMap = defaultdict(list)
 
-    @property
-    def indicators(self) -> IndicatorsMap:
-        return self._pool
+    # @property
+    # def indicators(self) -> IndicatorsMap:
+    #     return self._pool
 
     def create_indicator(
         self, timeframe: TimeFrame, indicator_type: IndicatorType
@@ -30,7 +33,7 @@ class IndicatorsPool:
         if indicator:
             return indicator
 
-        indicator_class = self._INDICATORS_MAP[indicator_type]
+        indicator_class = self._INDICATORS_TYPE_MAP[indicator_type]
         indicator = indicator_class(self._storage, timeframe)
         self._pool[timeframe].append(indicator)
         return indicator
@@ -38,9 +41,13 @@ class IndicatorsPool:
     def get_indicator(
         self, timeframe: TimeFrame, indicator_type: IndicatorType
     ) -> BaseIndicator:
-        indicator_class = self._INDICATORS_MAP[indicator_type]
+        indicator_class = self._INDICATORS_TYPE_MAP[indicator_type]
         indicators = filter(lambda x: type(x) is indicator_class, self._pool[timeframe])
         return next(indicators, None)
+
+    @property
+    def timeframes(self) -> list[TimeFrame]:
+        return list(self._pool)
 
     def get_indicators(self, timeframe: TimeFrame) -> list[BaseIndicator]:
         return self._pool[timeframe]

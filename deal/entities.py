@@ -8,14 +8,6 @@ class DealPhase(Enum):
     IN_DEAL = 2
 
 
-class DealEntryCondition(BaseModel):
-    pass
-
-
-class DealExitCondition(BaseModel):
-    pass
-
-
 class DealState(BaseModel):
     phase: DealPhase = DealPhase.LOOK_FOR_ENTRY_POINT
     average_price: float | None = None

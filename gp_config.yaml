@@ -14,20 +14,19 @@ deal:
 
   entry_condition:
     filters:
-      - type: BB
-        time_frame: 5m
-        periods: 20
-        moving_average: sma
+      - indicator: BB
+        timeframe: 5m
+        condition:
+          operator: lt
+          name: "lower_value"
 
   exit_condition:
     mode: signal
     signal:
       filters:
-        - type: BB
-          time_frame: 15m
-        - type: RSI
-          time_frame: 15m
+        - indicator: BB
+          timeframe: 15m
           condition:
             operator: gt
-            value: 70
+            name: "upper_value"
       pnl: 2

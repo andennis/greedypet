@@ -5,7 +5,7 @@ import os
 
 from deal.deal import Deal
 from deal.entities import DealState
-from entities import TimeFrame, StorageConfig, DealConfig
+from entities import StorageConfig, DealConfig
 from exceptions import GeneralAppException
 from gp_config import GPConfig
 from market_data_analyzer import MarketDataAnalyzer
@@ -40,7 +40,7 @@ def _get_trade_storage() -> TradesStorage:
 
 def _create_indicators_pool(storage: TradesStorage) -> IndicatorsPool:
     global _indicators_pool
-    if not _indicators_pool:
+    if _indicators_pool:
         raise GeneralAppException("Indicators pool has already been created")
 
     _indicators_pool = IndicatorsPool(storage)
@@ -54,15 +54,17 @@ def _get_indicators_pool() -> IndicatorsPool:
     return _indicators_pool
 
 
-def _init_deal_state(working_dir: str, deal_config: DealConfig, indicators_pool: IndicatorsPool):
+def _init_deal_state(
+    working_dir: str, deal_config: DealConfig, indicators_pool: IndicatorsPool
+):
     global _current_deal
     if _current_deal:
         raise GeneralAppException("Deal has already been initialized")
 
-    fn = os.path.join(working_dir, DEAL_STATE_FILE)
+    deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
     deal_state = None
-    if os.path.isfile(fn):
-        with open(fn, "r") as f:
+    if os.path.isfile(deal_state_file):
+        with open(deal_state_file, "r") as f:
             data = json.load(f)
             deal_state = DealState(**data)
 
@@ -81,8 +83,8 @@ def _save_deal_state(working_dir: str):
     if not _current_deal:
         raise GeneralAppException("Deal was not initialized")
 
-    fn = os.path.join(working_dir, DEAL_STATE_FILE)
-    with open(fn, "w", encoding="utf-8") as f:
+    deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
+    with open(deal_state_file, "w", encoding="utf-8") as f:
         data = _current_deal.state.model_dump()
         json.dump(data, f)
 

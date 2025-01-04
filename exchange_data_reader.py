@@ -4,6 +4,9 @@ from entities import TimeFrame, ExchangeConfig, Trade, TradeSide, TradingMode, O
 
 
 class ExchangeDataReader:
+    """
+    The exchange data reader reads data from the exchange
+    """
     def __init__(self, exchange_config: ExchangeConfig):
         exchange_class = getattr(ccxt, exchange_config.id.value)
         self._exchange = exchange_class(
@@ -22,16 +25,18 @@ class ExchangeDataReader:
         return self._exchange
 
     async def read_ohlcv_data(
-        self, symbol: str, time_frame: TimeFrame, limit: int
+        self, symbol: str, timeframe: TimeFrame, limit: int
     ) -> OhlcvData:
         """
-        :param symbol:
-        :param time_frame:
-        :param limit:
-        :return: list[list[float]]: A list of candles ordered: timestamp, open, high, low, close, volume
+        Args
+            symbol:
+            timeframe:
+            limit:
+        Returns:
+            list[list[float]]: A list of candles ordered: timestamp, open, high, low, close, volume
         """
         return await self._exchange.fetch_mark_ohlcv(
-            symbol, timeframe=time_frame.value, limit=limit
+            symbol, timeframe=timeframe.value, limit=limit
         )
 
     async def read_latest_trades(self, symbol: str) -> list[Trade]:
