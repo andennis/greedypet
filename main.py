@@ -36,7 +36,7 @@ LOGGING_CONFIG = {
             'level': 'INFO',
             'formatter': 'file',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/tmp/greedypet.log',
+            'filename': '<IT MUST BY SET>',
             'mode': 'a',
             'maxBytes': 1048576,
             'backupCount': 10
@@ -57,7 +57,8 @@ def _configure_logging(working_dir: pathlib.Path):
     with (open(str(working_dir / LOGGING_CONFIG_FILE), "r") as f):
         cfg_from_file = yaml.safe_load(f)
         cfg = LOGGING_CONFIG.copy()
-        cfg["handlers"]["file_handler"]["filename"] = str(working_dir / "logs/greedypet.log")
+        pathlib.Path.mkdir(log_path := working_dir / "logs")
+        cfg["handlers"]["file_handler"]["filename"] = log_path / "greedypet.log"
         if cfg_from_file:
             mergedeep.merge(cfg, cfg_from_file)
         logging.config.dictConfig(cfg)
@@ -79,7 +80,7 @@ async def run_trades(config: GPConfig, working_dir: str):
     mexec.init_market_execution(config, working_dir)
     tasks = [
         asyncio.create_task(mexec.reading_market_trades(config)),
-        asyncio.create_task(mexec.tracking_trade_signals(config)),
+        # asyncio.create_task(mexec.tracking_trade_signals(config)),
         # asyncio.create_task(mexec.making_market_trades(config))
     ]
     await asyncio.gather(*tasks)
@@ -88,10 +89,9 @@ async def run_trades(config: GPConfig, working_dir: str):
 @click.command()
 @click.option(
     "-w",
-    "--working_dir",
-    "working_dir",
+    "--working-dir",
     type=click.Path(exists=True),
-    default="",
+    default=".",
 )
 @click.option("-n", "--name", default=f"gp-{os.getpid()}")
 def main(working_dir: str, name: str):

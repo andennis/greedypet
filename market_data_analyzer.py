@@ -13,22 +13,22 @@ class MarketDataAnalyzer:
         self._config = config
         self._storage = storage
 
-    @cached_property
-    def timeframe_entrance_filters(self):
-        result = defaultdict(list)
-        for flt in self._config.entry_condition.filters:
-            result[flt.timeframe].append(flt)
-
-        return result
-
-    @cached_property
-    def timeframe_exit_filters(self):
-        result = defaultdict(list)
-        if self._config.exit_condition.mode == ExitMode.SIGNAL:
-            for flt in self._config.exit_condition.signal.filters:
-                result[flt.timeframe].append(flt)
-
-        return result
+    # @cached_property
+    # def timeframe_entrance_filters(self):
+    #     result = defaultdict(list)
+    #     for flt in self._config.entry_condition.filters:
+    #         result[flt.timeframe].append(flt)
+    #
+    #     return result
+    #
+    # @cached_property
+    # def timeframe_exit_filters(self):
+    #     result = defaultdict(list)
+    #     if self._config.exit_condition.mode == ExitMode.SIGNAL:
+    #         for flt in self._config.exit_condition.signal.filters:
+    #             result[flt.timeframe].append(flt)
+    #
+    #     return result
 
     @cached_property
     def min_timeframe(self) -> TimeFrame:

@@ -14,9 +14,5 @@ class DealFilter:
     def timeframe(self) -> TimeFrame:
         return self._timeframe
 
-    @property
-    def periods(self) -> list[int]:
-        return self._indicator.periods
-
     def is_triggered(self, value: float) -> bool:
         return self._condition.check(value)

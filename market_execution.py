@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 DEAL_STATE_FILE = "deal_state.json"
 
 _trade_storage: TradesStorage | None = None
-_current_deal: Deal | None = None
+_deal: Deal | None = None
 _indicators_pool: IndicatorsPool | None = None
 
 
@@ -38,7 +38,7 @@ def _get_trade_storage() -> TradesStorage:
     return _trade_storage
 
 
-def _create_indicators_pool(storage: TradesStorage) -> IndicatorsPool:
+def _init_indicators_pool(storage: TradesStorage) -> IndicatorsPool:
     global _indicators_pool
     if _indicators_pool:
         raise GeneralAppException("Indicators pool has already been created")
@@ -54,11 +54,11 @@ def _get_indicators_pool() -> IndicatorsPool:
     return _indicators_pool
 
 
-def _init_deal_state(
+def _init_deal(
     working_dir: str, deal_config: DealConfig, indicators_pool: IndicatorsPool
 ):
-    global _current_deal
-    if _current_deal:
+    global _deal
+    if _deal:
         raise GeneralAppException("Deal has already been initialized")
 
     deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
@@ -68,38 +68,38 @@ def _init_deal_state(
             data = json.load(f)
             deal_state = DealState(**data)
 
-    _current_deal = Deal(deal_config, indicators_pool, deal_state)
+    _deal = Deal(deal_config, indicators_pool, deal_state)
 
 
-def _get_current_deal() -> Deal:
-    global _current_deal
-    if not _current_deal:
+def _get_deal() -> Deal:
+    global _deal
+    if not _deal:
         raise GeneralAppException("Deal was not initialized")
-    return _current_deal
+    return _deal
 
 
-def _save_deal_state(working_dir: str):
-    global _current_deal
-    if not _current_deal:
+def _save_deal(working_dir: str):
+    global _deal
+    if not _deal:
         raise GeneralAppException("Deal was not initialized")
 
     deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
     with open(deal_state_file, "w", encoding="utf-8") as f:
-        data = _current_deal.state.model_dump()
+        data = _deal.state.model_dump()
         json.dump(data, f)
 
 
 def init_market_execution(config: GPConfig, working_dir: str):
     trade_storage = _init_trade_storage(config.storage)
-    indicators_pool = _create_indicators_pool(trade_storage)
-    _init_deal_state(working_dir, config.deal, indicators_pool)
+    indicators_pool = _init_indicators_pool(trade_storage)
+    _init_deal(working_dir, config.deal, indicators_pool)
 
 
 async def reading_market_trades(config: GPConfig):
     logger.info("Trades reading started")
 
     trade_storage = _get_trade_storage()
-    data_collector = MarketDataCollector(config.exchange, _get_indicators_pool())
+    data_collector = MarketDataCollector(config.exchange, config.market.symbol, _get_indicators_pool())
     try:
         # Prepare initial ohlcv data according to filters' demands
         logger.info("Collecting initial data...")

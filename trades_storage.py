@@ -1,17 +1,15 @@
 from datetime import datetime
 import pandas as pd
-from pandas import DataFrame
 from dataclasses import dataclass
 
 from exceptions import GeneralAppException
-
 from entities import TimeFrame, StorageConfig, Trade, OhlcvData
 from utils import timeframe_to_sec
 
 
 @dataclass
 class _TimeFrameData:
-    data: DataFrame
+    data: pd.DataFrame
     data_len: int
     latest_trade_timestamp: int
 
@@ -25,7 +23,7 @@ class TradesStorage:
 
     def upload_initial_ohlcv_data(
         self, time_frame: TimeFrame, ohlcv_data: OhlcvData
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         if not ohlcv_data:
             raise GeneralAppException("No data provided")
         if len(ohlcv_data[0]) != len(self._COLUMNS):
@@ -74,7 +72,7 @@ class TradesStorage:
 
     def get_latest_periods(
         self, time_frame: TimeFrame, to_timestamp: datetime | None = None, limit: int | None = None
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         """
         The function returns the latest ohlcv data for specified timeframe.
         The initial date for the specified timeframe must be preliminarily uploaded

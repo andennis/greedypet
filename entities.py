@@ -45,8 +45,8 @@ class ConditionOperator(Enum):
 
 
 class ExitMode(Enum):
-    PROFIT = "profit",
-    MULTI_TAKE = "multi-take"
+    # PROFIT = "profit",
+    # MULTI_TAKE = "multi-take"
     SIGNAL = "signal"
 
 
