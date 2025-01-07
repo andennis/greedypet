@@ -61,6 +61,7 @@ def _init_deal(
     if _deal:
         raise GeneralAppException("Deal has already been initialized")
 
+    logger.info("Loading deal state...")
     deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
     deal_state = None
     if os.path.isfile(deal_state_file):
@@ -68,6 +69,7 @@ def _init_deal(
             data = json.load(f)
             deal_state = DealState(**data)
 
+    logger.info("Deal state loaded")
     _deal = Deal(deal_config, indicators_pool, deal_state)
 
 
@@ -83,10 +85,12 @@ def _save_deal(working_dir: str):
     if not _deal:
         raise GeneralAppException("Deal was not initialized")
 
+    logger.info("Saving deal state...")
     deal_state_file = os.path.join(working_dir, DEAL_STATE_FILE)
     with open(deal_state_file, "w", encoding="utf-8") as f:
         data = _deal.state.model_dump()
         json.dump(data, f)
+    logger.info("Deal state saved")
 
 
 def init_market_execution(config: GPConfig, working_dir: str):
@@ -110,9 +114,9 @@ async def reading_market_trades(config: GPConfig):
 
         # Run trades gathering
         while True:
-            logger.info("Waiting for trades...")
+            logger.debug("Waiting for trades...")
             trades = await data_collector.collect_trades()
-            logger.info("New trades received")
+            logger.debug("New trades received")
             for trade in trades:
                 trade_storage.add_trade(trade)
             # await asyncio.sleep(1)

@@ -15,7 +15,7 @@ deal:
   entry_condition:
     filters:
       - indicator: BB
-        timeframe: 5m
+        timeframe: 1m
         condition:
           operator: lt
           name: "lower_value"
@@ -25,7 +25,7 @@ deal:
     signal:
       filters:
         - indicator: BB
-          timeframe: 15m
+          timeframe: 5m
           condition:
             operator: gt
             name: "upper_value"
