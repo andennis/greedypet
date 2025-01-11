@@ -1,5 +1,7 @@
 from collections import defaultdict
+from datetime import datetime
 
+import utils
 from entities import IndicatorType, TimeFrame
 from indicators.base_indicator import BaseIndicator, BaseIndicatorResult
 from indicators.bollinger_bands_indicator import BollingerBandsIndicator
@@ -46,9 +48,8 @@ class IndicatorsPool:
     def get_indicators(self, timeframe: TimeFrame) -> list[BaseIndicator]:
         return self._pool[timeframe]
 
-    #
-    # def calculate(self, to_timestamp: datetime) -> None:
-    #     timeframes = utils.get_closed_timeframes(to_timestamp.timestamp())
-    #     for tf in timeframes:
-    #         for indicator in self._pool[tf]:
-    #             indicator.calculate(to_timestamp)
+    def calculate(self, to_timestamp: datetime) -> None:
+        timeframes = utils.get_closed_timeframes(to_timestamp.timestamp())
+        for tf in timeframes:
+            for indicator in self._pool[tf]:
+                indicator.calculate(to_timestamp)

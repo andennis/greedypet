@@ -75,7 +75,7 @@ class TradesStorage:
     ) -> pd.DataFrame:
         """
         The function returns the latest ohlcv data for specified timeframe.
-        The initial date for the specified timeframe must be preliminarily uploaded
+        The initial data for the specified timeframe must be preliminarily uploaded
         by the function upload_initial_ohlcv_data
 
         Args:
@@ -101,3 +101,28 @@ class TradesStorage:
             return df
         return df.tail(limit)
 
+    def get_close_price(self, time_frame: TimeFrame, to_timestamp: datetime) -> float:
+        """
+        The function returns the close price for specified timeframe and timestamp
+        Args:
+            time_frame: the ohlcv data timeframe
+            to_timestamp: timestamp
+
+        Returns:
+            close price of ohlcv record
+
+        Raises:
+            GeneralAppException: No data was preliminarily uploaded for the specified timeframe.
+            See the function upload_initial_ohlcv_data
+
+            GeneralAppException: There is no data for specified timestamp
+        """
+        if time_frame not in self._data:
+            raise GeneralAppException(f"Timeframe {time_frame} does not exist")
+
+        df = self._data[time_frame].data
+        if to_timestamp not in df.index:
+            raise GeneralAppException(f"Timestamp {to_timestamp} does not exist")
+
+        df = df.loc[to_timestamp]
+        return df.close

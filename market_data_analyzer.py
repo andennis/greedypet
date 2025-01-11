@@ -3,33 +3,14 @@ from functools import cached_property
 
 import utils
 from entities import TimeFrame, ExitMode, DealConfig
-from trades_storage import TradesStorage
 
 
 class MarketDataAnalyzer:
-    def __init__(self, config: DealConfig, storage: TradesStorage):
+    def __init__(self, config: DealConfig):
         self._config = config
-        self._storage = storage
-
-    # @cached_property
-    # def timeframe_entrance_filters(self):
-    #     result = defaultdict(list)
-    #     for flt in self._config.entry_condition.filters:
-    #         result[flt.timeframe].append(flt)
-    #
-    #     return result
-    #
-    # @cached_property
-    # def timeframe_exit_filters(self):
-    #     result = defaultdict(list)
-    #     if self._config.exit_condition.mode == ExitMode.SIGNAL:
-    #         for flt in self._config.exit_condition.signal.filters:
-    #             result[flt.timeframe].append(flt)
-    #
-    #     return result
 
     @cached_property
-    def min_timeframe(self) -> TimeFrame:
+    def _min_timeframe(self) -> TimeFrame:
         filters = self._config.entry_condition.filters
         min_tf1 = min(map(lambda x: x.timeframe, filters), key=utils.timeframe_to_sec)
         if self._config.exit_condition.mode == ExitMode.SIGNAL:
@@ -42,5 +23,5 @@ class MarketDataAnalyzer:
         return min_tf1
 
     async def sleep_to_next_timeframe(self):
-        sleep_interval = utils.get_time_to_next_timeframe(self.min_timeframe)
+        sleep_interval = utils.get_time_to_next_timeframe(self._min_timeframe)
         await asyncio.sleep(sleep_interval)

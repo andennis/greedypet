@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, call, AsyncMock
 
-from indicators.bollinger_bands_indicator import BollingerBandsIndicator
 from indicators.indicators_pool import IndicatorsPool
 from market_data_collector import MarketDataCollector
 from gp_config import GPConfig
@@ -89,5 +88,3 @@ async def test_collect_trades(mock_read_latest_trades: AsyncMock, data_collector
 async def test_close(mock_close: AsyncMock, data_collector):
     await data_collector.close()
     mock_close.assert_awaited_once()
-
-

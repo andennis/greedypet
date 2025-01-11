@@ -2,6 +2,7 @@ import logging
 import asyncio
 import json
 import os
+from datetime import datetime, timezone
 
 from deal.deal import Deal
 from deal.entities import DealState
@@ -130,9 +131,10 @@ async def reading_market_trades(config: GPConfig):
 async def tracking_trade_signals(config: GPConfig):
     logger.info("Trade signals tracking started")
     try:
-        trade_storage = _get_trade_storage()
-        data_analyzer = MarketDataAnalyzer(config.deal, trade_storage)
+        indicators_pool = _get_indicators_pool()
+        data_analyzer = MarketDataAnalyzer(config.deal)
         while True:
+            indicators_pool.calculate(datetime.now(timezone.utc))
             logger.info("Wait for next timeframe")
             await data_analyzer.sleep_to_next_timeframe()
     except asyncio.CancelledError:

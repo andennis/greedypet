@@ -9,10 +9,18 @@ class DealFilter:
         self._latest_timestamp = None
         self._indicator = indicators_pool.create_indicator(self._timeframe, config.indicator)
         self._condition = DealFilterCondition(config.condition, self._indicator)
+        self._is_triggered = False
 
-    @property
-    def timeframe(self) -> TimeFrame:
-        return self._timeframe
+    # @property
+    # def timeframe(self) -> TimeFrame:
+    #     return self._timeframe
 
-    def is_triggered(self, value: float) -> bool:
-        return self._condition.check(value)
+    # def reset(self):
+    #     self._is_triggered = False
+
+    def is_triggered(self) -> bool:
+        return self._is_triggered
+
+    def check(self, signal_value: float):
+        self._is_triggered = self._condition.check(signal_value)
+

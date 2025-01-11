@@ -1,7 +1,7 @@
 import pytest
 import numpy
 import pandas as pd
-from datetime import timedelta
+from datetime import timedelta, datetime
 from exceptions import GeneralAppException
 from trades_storage import TradesStorage
 from entities import TimeFrame, Trade, TradeSide
@@ -9,6 +9,7 @@ from entities import TimeFrame, Trade, TradeSide
 
 DT_FORMAT = "%Y-%m-%dT%H:%M:%S"
 OHLCV_DATA_30M = [
+    # timestamp     open     high     low       close     volume
     [1729535400000, 67012.8, 67012.8, 66686.93, 66999.28, 0.061758],  # 2024-10-21 18:30
     [1729537200000, 66999.28, 67012.8, 66700.0, 67012.8, 0.048467],
     [1729539000000, 67012.8, 67012.8, 67012.8, 67012.8, 0.060964],
@@ -75,11 +76,11 @@ def test_get_latest_periods(
 
 def test_get_latest_periods_failed(trades_storage: TradesStorage):
     with pytest.raises(GeneralAppException):
-        trades_storage.get_latest_periods(TimeFrame.TF_5M, 1)
+        trades_storage.get_latest_periods(TimeFrame.TF_5M, datetime.now())
 
     trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, OHLCV_DATA_30M)
     with pytest.raises(GeneralAppException):
-        trades_storage.get_latest_periods(TimeFrame.TF_5M, 1)
+        trades_storage.get_latest_periods(TimeFrame.TF_5M, datetime.now())
 
 
 @pytest.mark.parametrize(
@@ -228,3 +229,21 @@ def test_add_trade_with_earlier_timestamp(
     assert ltf.high == expected_high
     assert ltf.low == expected_low
     assert ltf.close == expected_close
+
+
+def test_get_close_price(trades_storage: TradesStorage):
+    trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, OHLCV_DATA_30M)
+    latest_ts = pd.Timestamp(OHLCV_DATA_30M[4][0], unit="ms")
+    result = trades_storage.get_close_price(TimeFrame.TF_30M, latest_ts)
+    assert result == OHLCV_DATA_30M[4][4]
+
+
+def test_get_close_price_failed(trades_storage: TradesStorage):
+    trades_storage.upload_initial_ohlcv_data(TimeFrame.TF_30M, OHLCV_DATA_30M)
+    with pytest.raises(GeneralAppException) as e:
+        trades_storage.get_close_price(TimeFrame.TF_5M, datetime.now())
+    assert "Timeframe" in e.value.args[0]
+
+    with pytest.raises(GeneralAppException) as e:
+        trades_storage.get_close_price(TimeFrame.TF_30M, datetime.now())
+    assert "Timestamp" in e.value.args[0]

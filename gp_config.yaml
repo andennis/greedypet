@@ -17,7 +17,7 @@ deal:
       - indicator: BB
         timeframe: 1m
         condition:
-          operator: lt
+          operator: gt
           name: "lower_value"
 
   exit_condition:
@@ -27,6 +27,6 @@ deal:
         - indicator: BB
           timeframe: 5m
           condition:
-            operator: gt
+            operator: lt
             name: "upper_value"
       pnl: 2

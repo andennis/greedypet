@@ -10,11 +10,12 @@ class DealFilterCondition:
 
     def check(self, cur_value: float) -> bool:
         latest_result = self._indicator.latest_result
-        filter_val = getattr(latest_result, self._config.name)
+        indicator_val = getattr(latest_result, self._config.name)
+        val = self._config.value or cur_value
         match self._config.operator:
             case ConditionOperator.GT:
-                return cur_value > filter_val
+                return indicator_val > val
             case ConditionOperator.LT:
-                return cur_value < filter_val
+                return indicator_val < val
 
         raise GeneralAppException(f"Operator {self._config.operator} is not supported")
