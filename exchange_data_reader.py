@@ -13,6 +13,10 @@ class ExchangeDataReader:
             {
                 "apiKey": os.environ.get("GP_API_KEY", exchange_config.api_key),
                 "secret": os.environ.get("GP_API_SECRET", exchange_config.api_secret),
+                "options": {
+                    "maxRetriesOnFailure": exchange_config.max_retries_on_failure,
+                    "maxRetriesOnFailureDelay": exchange_config.max_retries_on_failure_delay
+                }
             }
         )
         if exchange_config.trading_mode == TradingMode.SANDBOX:

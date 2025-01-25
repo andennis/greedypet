@@ -5,7 +5,7 @@ import os
 from datetime import datetime, timezone
 
 from deal.deal import Deal
-from deal.entities import DealState
+from deal.entities import DealState, DealPhase
 from entities import StorageConfig, DealConfig
 from exceptions import GeneralAppException
 from gp_config import GPConfig
@@ -109,6 +109,7 @@ async def reading_market_trades(config: GPConfig):
         # Prepare initial ohlcv data according to filters' demands
         logger.info("Collecting initial data...")
         tf_ohlcv_data = await data_collector.collect_initial_data()
+        logger.info("Save initial data to data store")
         for tf, ohlcv_data in tf_ohlcv_data.items():
             trade_storage.upload_initial_ohlcv_data(tf, ohlcv_data)
         logger.info("Initial data has been collected")
@@ -120,7 +121,6 @@ async def reading_market_trades(config: GPConfig):
             logger.debug("New trades received")
             for trade in trades:
                 trade_storage.add_trade(trade)
-            # await asyncio.sleep(1)
 
     except asyncio.CancelledError:
         logger.info("Trades reading finished")
@@ -133,8 +133,17 @@ async def tracking_trade_signals(config: GPConfig):
     try:
         indicators_pool = _get_indicators_pool()
         data_analyzer = MarketDataAnalyzer(config.deal)
+        deal = _get_deal()
         while True:
-            indicators_pool.calculate(datetime.now(timezone.utc))
+            dt = datetime.now(timezone.utc)
+            logger.debug("Calculate indicators")
+            indicators_pool.calculate(dt)
+            logger.debug("Check filters")
+            deal.check_filters(dt)
+            if deal.is_triggered():
+                logger.info("Change deal phase")
+                deal.switch_deal_phase()
+
             logger.info("Wait for next timeframe")
             await data_analyzer.sleep_to_next_timeframe()
     except asyncio.CancelledError:

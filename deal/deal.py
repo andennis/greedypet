@@ -74,3 +74,7 @@ class Deal:
             if not result:
                 return False
         return True
+
+    def switch_deal_phase(self):
+        pass
+

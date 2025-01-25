@@ -61,6 +61,8 @@ class ExchangeConfig(BaseModel):
     api_key: str | None = None
     api_secret: str | None = None
     trading_mode: TradingMode = TradingMode.SANDBOX
+    max_retries_on_failure: int = 3
+    max_retries_on_failure_delay: int = 500  # milliseconds
 
 
 class ExchangeMarket(BaseModel):
