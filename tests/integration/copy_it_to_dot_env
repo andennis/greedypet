@@ -1,0 +1,7 @@
+# This file must be copied and renamed to ".env".
+# All the environment variables must be set to actual values
+
+GP_API_KEY="<your api key>"
+GP_API_SECRET="<your api secret>"
+
+GP_TEST_DB_URL="<connection string to test DB>"
