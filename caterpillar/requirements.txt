@@ -1,0 +1,14 @@
+click==8.1.*
+pydantic==2.10.*
+PyYAML==6.0.*
+python-dotenv==1.0.*
+asyncio==3.4.*
+ccxt==4.4.*
+mergedeep
+asyncpg==0.30.*
+sqlalchemy[asyncio]==2.0.*
+../common
+pytest
+pytest-asyncio
+black
+
