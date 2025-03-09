@@ -1,8 +1,8 @@
 import asyncio
 from functools import cached_property
 
-import utils
-from entities import TimeFrame, ExitMode, DealConfig
+import watchbird.utils as utils
+from watchbird.entities import TimeFrame, ExitMode, DealConfig
 
 
 class MarketDataAnalyzer:

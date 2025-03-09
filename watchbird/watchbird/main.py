@@ -9,8 +9,8 @@ import asyncio
 import functools
 import mergedeep
 
-import market_execution as mexec
-from gp_config import load_config, GPConfig
+import watchbird.market_execution as mexec
+from watchbird.gp_config import load_config, GPConfig
 
 
 logger = logging.getLogger(__name__)

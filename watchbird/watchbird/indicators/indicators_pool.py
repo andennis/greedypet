@@ -1,11 +1,11 @@
 from collections import defaultdict
 from datetime import datetime
 
-import utils
-from entities import IndicatorType, TimeFrame
-from indicators.base_indicator import BaseIndicator, BaseIndicatorResult
-from indicators.bollinger_bands_indicator import BollingerBandsIndicator
-from trades_storage import TradesStorage
+from .. import utils
+from watchbird.entities import IndicatorType, TimeFrame
+from .base_indicator import BaseIndicator, BaseIndicatorResult
+from .bollinger_bands_indicator import BollingerBandsIndicator
+from watchbird.trades_storage import TradesStorage
 
 IndicatorsMap = dict[TimeFrame, list[BaseIndicator[type[BaseIndicatorResult]]]]
 

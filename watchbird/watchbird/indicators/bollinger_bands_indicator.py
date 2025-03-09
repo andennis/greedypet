@@ -1,8 +1,8 @@
 from datetime import datetime
 import pandas_ta as ta
 from dataclasses import dataclass
-from exceptions import GeneralAppException
-from indicators.base_indicator import BaseIndicator, BaseIndicatorResult
+from watchbird.exceptions import GeneralAppException
+from .base_indicator import BaseIndicator, BaseIndicatorResult
 
 
 @dataclass

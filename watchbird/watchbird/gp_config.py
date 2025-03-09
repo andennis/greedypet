@@ -1,7 +1,8 @@
 import yaml
 import logging
 from pydantic import BaseModel
-from entities import ExchangeConfig, ExchangeMarket, DealConfig, StorageConfig
+
+from watchbird.entities import ExchangeConfig, ExchangeMarket, DealConfig, StorageConfig
 
 logger = logging.getLogger(__name__)
 

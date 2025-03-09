@@ -1,6 +1,6 @@
-from entities import FilterCondition, ConditionOperator
-from exceptions import GeneralAppException
-from indicators.base_indicator import BaseIndicator
+from watchbird.entities import FilterCondition, ConditionOperator
+from watchbird.exceptions import GeneralAppException
+from watchbird.indicators.indicators_pool import BaseIndicator
 
 
 class DealFilterCondition:

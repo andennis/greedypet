@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import patch, AsyncMock
-from exchange_data_reader import ExchangeDataReader
-from entities import ExchangeConfig, ExchangeId, TimeFrame, Trade, TradeSide
+
+from watchbird.exchange_data_reader import ExchangeDataReader
+from watchbird.entities import ExchangeConfig, ExchangeId, TimeFrame, Trade, TradeSide
 
 
 @pytest.fixture
@@ -15,7 +16,8 @@ def test_data_reader_config():
     assert dr.exchange.id == "bybit"
     assert dr.exchange.apiKey == "key1"
     assert dr.exchange.secret == "secret1"
-    assert dr.exchange.options["sandboxMode"]
+    # assert dr.exchange.options["sandboxMode"]
+    assert dr.exchange.isSandboxModeEnabled
 
 
 def test_data_reader_config_env(monkeypatch):

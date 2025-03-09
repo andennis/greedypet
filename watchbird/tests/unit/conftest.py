@@ -1,7 +1,7 @@
 import pytest
 
-from entities import StorageConfig
-from trades_storage import TradesStorage
+from watchbird.entities import StorageConfig
+from watchbird.trades_storage import TradesStorage
 
 
 # @pytest.fixture

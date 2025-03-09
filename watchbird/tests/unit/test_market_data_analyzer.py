@@ -1,7 +1,8 @@
 from unittest.mock import patch
 import pytest
-from entities import DealConfig, TimeFrame
-from market_data_analyzer import MarketDataAnalyzer
+
+from watchbird.entities import DealConfig, TimeFrame
+from watchbird.market_data_analyzer import MarketDataAnalyzer
 
 _deal_config = {
     "trade_algorithm": "long",
@@ -44,8 +45,8 @@ def data_analyzer(deal_config):
 
 
 @pytest.mark.asyncio
-@patch("market_data_analyzer.asyncio.sleep")
-@patch("utils.get_time_to_next_timeframe")
+@patch("watchbird.market_data_analyzer.asyncio.sleep")
+@patch("watchbird.utils.get_time_to_next_timeframe")
 async def test_sleep_to_next_timeframe(
     mock_time_to_next_timeframe,
     mock_sleep,
@@ -55,4 +56,3 @@ async def test_sleep_to_next_timeframe(
     await data_analyzer.sleep_to_next_timeframe()
     mock_time_to_next_timeframe.assert_called_once_with(TimeFrame.TF_5M)
     mock_sleep.assert_awaited_once_with(15)
-

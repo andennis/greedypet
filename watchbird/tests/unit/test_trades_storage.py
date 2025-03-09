@@ -2,9 +2,9 @@ import pytest
 import numpy
 import pandas as pd
 from datetime import timedelta, datetime
-from exceptions import GeneralAppException
-from trades_storage import TradesStorage
-from entities import TimeFrame, Trade, TradeSide
+from watchbird.exceptions import GeneralAppException
+from watchbird.trades_storage import TradesStorage
+from watchbird.entities import TimeFrame, Trade, TradeSide
 
 
 DT_FORMAT = "%Y-%m-%dT%H:%M:%S"

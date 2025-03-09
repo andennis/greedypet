@@ -1,7 +1,7 @@
 import pytest_asyncio
-from entities import ExchangeConfig, ExchangeId, TradingMode
+from watchbird.entities import ExchangeConfig, ExchangeId, TradingMode
 from dotenv import load_dotenv
-from exchange_data_reader import ExchangeDataReader
+from watchbird.exchange_data_reader import ExchangeDataReader
 
 load_dotenv()
 

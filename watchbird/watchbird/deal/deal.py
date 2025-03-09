@@ -1,12 +1,12 @@
 from collections import defaultdict
 from datetime import datetime
 
-import utils
-from indicators.indicators_pool import IndicatorsPool
-from trades_storage import TradesStorage
+from .. import utils
+from watchbird.indicators.indicators_pool import IndicatorsPool
+from watchbird.trades_storage import TradesStorage
 from .deal_filter import DealFilter
 from .entities import DealState, DealPhase
-from entities import DealConfig, ExitMode, TimeFrame, FilterConfig
+from watchbird.entities import DealConfig, ExitMode, TimeFrame, FilterConfig
 
 
 class Deal:

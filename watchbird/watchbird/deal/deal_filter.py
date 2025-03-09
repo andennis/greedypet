@@ -1,6 +1,6 @@
-from deal.deal_filter_condition import DealFilterCondition
-from entities import FilterConfig, TimeFrame
-from indicators.indicators_pool import IndicatorsPool
+from .deal_filter_condition import DealFilterCondition
+from watchbird.entities import FilterConfig
+from watchbird.indicators.indicators_pool import IndicatorsPool
 
 
 class DealFilter:

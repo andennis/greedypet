@@ -4,8 +4,8 @@
 # GP_API_SECRET=<your secret>
 #
 import pytest
-from exchange_data_reader import ExchangeDataReader
-from entities import TimeFrame
+from watchbird.exchange_data_reader import ExchangeDataReader
+from watchbird.entities import TimeFrame
 
 
 @pytest.mark.asyncio

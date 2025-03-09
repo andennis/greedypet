@@ -1,8 +1,8 @@
 from unittest.mock import patch, mock_open
 import pytest
 
-from gp_config import load_config
-from entities import (
+from watchbird.gp_config import load_config
+from watchbird.entities import (
     ExchangeId,
     MarketType,
     TradeAlgorithm,

@@ -1,6 +1,6 @@
 import time
-from entities import TimeFrame
-from exceptions import NotSupported
+from watchbird.entities import TimeFrame
+from watchbird.exceptions import NotSupported
 
 
 # class Singleton(type):

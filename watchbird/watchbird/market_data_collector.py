@@ -1,7 +1,8 @@
 from collections import defaultdict
-from exchange_data_reader import ExchangeDataReader
-from entities import TimeFrame, Trade, OhlcvData, ExchangeConfig
-from indicators.indicators_pool import IndicatorsPool
+
+from watchbird.exchange_data_reader import ExchangeDataReader
+from watchbird.entities import TimeFrame, Trade, OhlcvData, ExchangeConfig
+from watchbird.indicators.indicators_pool import IndicatorsPool
 
 
 class MarketDataCollector:

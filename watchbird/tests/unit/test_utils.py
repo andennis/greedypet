@@ -1,7 +1,7 @@
 from unittest.mock import patch
 import pytest
-from entities import TimeFrame
-from utils import (
+from watchbird.entities import TimeFrame
+from watchbird.utils import (
     timeframe_to_sec,
     get_closed_timeframes,
     get_time_to_next_timeframe,
@@ -81,7 +81,7 @@ def test_get_closed_timeframes(timestamp: int, delta: float, time_frames: list[T
         (3600 + 600, TimeFrame.TF_15M, 15 * 60 - 600),
     ],
 )
-@patch("utils.time.time")
+@patch("watchbird.utils.time.time")
 def test_get_time_to_next_timeframe(
     mock_time,
     cur_time: int,
@@ -100,7 +100,7 @@ def test_get_time_to_next_timeframe(
         (599.1, TimeFrame.TF_5M, 600),
     ],
 )
-@patch("utils.time.time")
+@patch("watchbird.utils.time.time")
 def test_current_time_to_timeframe_time(
     mock_time,
     cur_time: int,

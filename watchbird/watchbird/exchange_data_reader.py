@@ -1,6 +1,7 @@
 import os
 import ccxt.pro as ccxt
-from entities import TimeFrame, ExchangeConfig, Trade, TradeSide, TradingMode, OhlcvData
+
+from watchbird.entities import TimeFrame, ExchangeConfig, Trade, TradeSide, TradingMode, OhlcvData
 
 
 class ExchangeDataReader:

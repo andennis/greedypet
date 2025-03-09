@@ -2,9 +2,9 @@ from datetime import datetime
 import pandas as pd
 from dataclasses import dataclass
 
-from exceptions import GeneralAppException
-from entities import TimeFrame, StorageConfig, Trade, OhlcvData
-from utils import timeframe_to_sec
+from watchbird.exceptions import GeneralAppException
+from watchbird.entities import TimeFrame, StorageConfig, Trade, OhlcvData
+from watchbird.utils import timeframe_to_sec
 
 
 @dataclass

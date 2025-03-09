@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import TypeVar, Generic
 from dataclasses import dataclass
 
-from entities import TimeFrame
-from trades_storage import TradesStorage
+from watchbird.entities import TimeFrame
+from watchbird.trades_storage import TradesStorage
 
 
 @dataclass

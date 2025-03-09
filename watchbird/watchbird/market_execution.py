@@ -4,15 +4,15 @@ import json
 import os
 from datetime import datetime, timezone
 
-from deal.deal import Deal
-from deal.entities import DealState, DealPhase
-from entities import StorageConfig, DealConfig
-from exceptions import GeneralAppException
-from gp_config import GPConfig
-from market_data_analyzer import MarketDataAnalyzer
-from market_data_collector import MarketDataCollector
-from trades_storage import TradesStorage
-from indicators.indicators_pool import IndicatorsPool
+from watchbird.deal.deal import Deal
+from watchbird.deal.deal import DealState
+from watchbird.entities import StorageConfig, DealConfig
+from watchbird.exceptions import GeneralAppException
+from watchbird.gp_config import GPConfig
+from watchbird.market_data_analyzer import MarketDataAnalyzer
+from watchbird.market_data_collector import MarketDataCollector
+from watchbird.trades_storage import TradesStorage
+from watchbird.indicators.indicators_pool import IndicatorsPool
 
 logger = logging.getLogger(__name__)
 
