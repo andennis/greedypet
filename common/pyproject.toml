@@ -1,0 +1,25 @@
+[project]
+name = "common"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Dzianis Andreyeu",email = "andninbox@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pytest (>=8.3.5,<9.0.0)",
+    "pytest-asyncio (>=0.25.3,<0.26.0)",
+    "black (>=25.1.0,<26.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry]
+packages = [
+    { include = "common", from = "src" },
+]
