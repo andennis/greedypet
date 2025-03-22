@@ -17,7 +17,7 @@ class OHLCVViewRepository(BaseViewRepository[OHLCVData]):
             .where(OHLCVData.bucket.between(start_time, end_time))
             .order_by(OHLCVData.bucket)
         )
-        return await self.execute(query)
+        return await self.execute_query(query)
 
     # @staticmethod
     # def to_dict(candle: OHLCVData) -> Dict[str, Any]:

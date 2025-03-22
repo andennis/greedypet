@@ -14,7 +14,7 @@ async def btc_pair(repo_pair, clean_db):
 
 
 @pytest.mark.asyncio
-async def test_add_trade(repo_trade, btc_pair):
+async def test_add_delete_trade(repo_trade, btc_pair):
     new_trade = Trade(
         pair_id=btc_pair.pair_id,
         price=Decimal("50000.00"),
@@ -31,19 +31,22 @@ async def test_add_trade(repo_trade, btc_pair):
     assert trade.volume == new_trade.volume
     assert trade.side == new_trade.side
 
+    await repo_trade.delete(trade)
+    await repo_trade.commit()
+
 
 @pytest.mark.asyncio
 async def test_get_filtered_trades(repo_trade, btc_pair):
     # Add trades with different timestamps
     now = datetime.now(timezone.utc)
-    await repo_trade.create(Trade(
+    trade1 = await repo_trade.create(Trade(
         pair_id=btc_pair.pair_id,
         price=Decimal("50000.00"),
         volume=Decimal("1.0"),
         side=TradeSide.BUY,
         timestamp=now - timedelta(hours=2)
     ))
-    new_trade = await repo_trade.create(Trade(
+    trade2 = await repo_trade.create(Trade(
         pair_id=btc_pair.pair_id,
         price=Decimal("51000.00"),
         volume=Decimal("1.0"),
@@ -53,9 +56,23 @@ async def test_get_filtered_trades(repo_trade, btc_pair):
     await repo_trade.commit()
 
     # Test time filtering
+    recent_trades = await repo_trade.get_filtered(pair_id=btc_pair.pair_id)
+    assert len(recent_trades) == 2
+
     recent_trades = await repo_trade.get_filtered(
         pair_id=btc_pair.pair_id,
         start_time=now - timedelta(hours=1)
     )
     assert len(recent_trades) == 1
-    assert recent_trades[0].timestamp == new_trade.timestamp
+    assert recent_trades[0].timestamp == trade2.timestamp
+
+    await repo_trade.delete(trade1)
+    await repo_trade.delete(trade2)
+    await repo_trade.commit()
+    recent_trades = await repo_trade.get_filtered(
+        pair_id=btc_pair.pair_id,
+    )
+    assert len(recent_trades) == 0
+
+
+

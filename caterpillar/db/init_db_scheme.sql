@@ -10,9 +10,6 @@ BEGIN
 END
 $$;
 
--- Create enum for trade side
-CREATE TYPE tradeside AS ENUM ('BUY', 'SELL');
-
 -- Create table for currency pairs
 CREATE TABLE currency_pairs (
     pair_id SERIAL PRIMARY KEY,
@@ -25,6 +22,9 @@ CREATE TABLE currency_pairs (
 
 -- Set ownership and permissions
 ALTER TABLE currency_pairs OWNER TO greedypet;
+
+-- Create enum for trade side
+CREATE TYPE tradeside AS ENUM ('BUY', 'SELL');
 
 -- Create table for trades
 CREATE TABLE trades (

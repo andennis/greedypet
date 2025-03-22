@@ -20,7 +20,7 @@ class BaseViewRepository(Generic[ModelType]):
         result = await self._session.execute(select(self.model).filter_by(**kwargs))
         return result.scalar_one_or_none()
 
-    async def execute(self, query: Select) -> list[ModelType]:
+    async def execute_query(self, query: Select) -> list[ModelType]:
         result = await self._session.execute(query)
         return list(result.scalars().all())
 
@@ -39,4 +39,4 @@ class BaseViewRepository(Generic[ModelType]):
                 field = getattr(self.model, prm)
                 query = query.where(field == val)
 
-        return await self.execute(query)
+        return await self.execute_query(query)

@@ -26,23 +26,23 @@ class TradeRepository(BaseRepository[Trade]):
         if end_time is not None:
             query = query.where(Trade.timestamp <= end_time)
 
-        return await self.execute(query)
+        return await self.execute_query(query)
 
-    @staticmethod
-    def to_dict(trade: Trade) -> dict[str, Any]:
-        """
-        Convert Trade instance to dictionary.
-
-        Args:
-            trade: Trade instance
-
-        Returns:
-            Dictionary with trade data
-        """
-        return {
-            "pair_id": trade.pair_id,
-            "price": float(trade.price),
-            "volume": float(trade.volume),
-            "side": trade.side.value,
-            "timestamp": trade.timestamp,
-        }
+    # @staticmethod
+    # def to_dict(trade: Trade) -> dict[str, Any]:
+    #     """
+    #     Convert Trade instance to dictionary.
+    #
+    #     Args:
+    #         trade: Trade instance
+    #
+    #     Returns:
+    #         Dictionary with trade data
+    #     """
+    #     return {
+    #         "pair_id": trade.pair_id,
+    #         "price": float(trade.price),
+    #         "volume": float(trade.volume),
+    #         "side": trade.side.value,
+    #         "timestamp": trade.timestamp,
+    #     }

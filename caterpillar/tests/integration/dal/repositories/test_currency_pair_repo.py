@@ -3,24 +3,8 @@ import pytest
 from caterpillar.dal.models.currency_pair import CurrencyPair
 
 
-# @pytest.mark.asyncio
-# async def test1(clean_db):
-#     async with DbClient(TEST_DB_URL) as client:
-#         async with client.session() as conn:
-#             rep = CurrencyPairRepository(conn)
-#             await rep.add("BTC", "USDT")
-#             await rep.add("ETH", "USDT")
-#             await conn.commit()
-#
-#         async with client.session() as session:
-#             rep = CurrencyPairRepository(session)
-#             await rep.add("SOL", "USDT")
-#             await rep.get_all()
-#             await session.commit()
-
-
 @pytest.mark.asyncio
-async def test_add_currency_pair(clean_db, repo_pair):
+async def test_add_pair(clean_db, repo_pair):
     pair = await repo_pair.add("BTC", "USD")
     await repo_pair.commit()
 

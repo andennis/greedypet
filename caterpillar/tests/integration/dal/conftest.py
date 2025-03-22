@@ -1,4 +1,6 @@
 import os
+
+import pytest
 import pytest_asyncio
 
 from dotenv import load_dotenv
@@ -8,8 +10,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from caterpillar.dal.db_client import DbClient
 
 load_dotenv()
-
-TEST_DB_URL = os.environ["GP_TEST_DB_URL"]
 
 
 # @pytest_asyncio.fixture(scope="session")
@@ -24,10 +24,14 @@ TEST_DB_URL = os.environ["GP_TEST_DB_URL"]
 #
 #     await engine.dispose()
 
+@pytest.fixture
+def db_conn_url():
+    return os.environ["GP_TEST_DB_URL"]
+
 
 @pytest_asyncio.fixture
-async def clean_db():
-    engine = create_async_engine(TEST_DB_URL)
+async def clean_db(db_conn_url):
+    engine = create_async_engine(db_conn_url)
     async with engine.begin() as conn:
         await conn.execute(text("TRUNCATE TABLE currency_pairs CASCADE"))
         await conn.execute(text("TRUNCATE TABLE trades CASCADE"))
@@ -35,6 +39,6 @@ async def clean_db():
 
 
 @pytest_asyncio.fixture
-async def db_client():
-    async with DbClient(TEST_DB_URL) as client:
+async def db_client(db_conn_url):
+    async with DbClient(db_conn_url) as client:
         yield client

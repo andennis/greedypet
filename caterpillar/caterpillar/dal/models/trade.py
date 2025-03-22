@@ -7,14 +7,14 @@ from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy import Integer, ForeignKey, TIMESTAMP, Numeric
 from sqlalchemy import Enum as SQLEnum
 
-from .base_model import Base, pk_int
+from .base_model import Base
 
 numeric20_8 = Annotated[Decimal, mapped_column(Numeric(20, 8), nullable=False)]
 
 
 class TradeSide(str, Enum):
-    BUY = "buy"
-    SELL = "sell"
+    BUY = "BUY"
+    SELL = "SELL"
 
 
 class Trade(Base):
