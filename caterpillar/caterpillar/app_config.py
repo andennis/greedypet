@@ -2,14 +2,18 @@ import logging
 import yaml
 from pydantic import BaseModel
 
-from entities import ExchangeConfig, ExchangeMarket
+from common.exchange.entities import ExchangeConfig
 
 logger = logging.getLogger(__name__)
 
 
+class DataBaseConfig(BaseModel):
+    connection: str
+
+
 class AppConfig(BaseModel):
     exchange: ExchangeConfig
-    market: ExchangeMarket
+    database: DataBaseConfig
 
 
 def load_config(file_name: str):
@@ -18,4 +22,3 @@ def load_config(file_name: str):
         config = AppConfig(**cfg)
         logger.info(f"Config loaded from {file_name}")
         return config
-

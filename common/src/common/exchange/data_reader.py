@@ -1,23 +1,30 @@
-import os
 import ccxt.pro as ccxt
 
-from watchbird.entities import TimeFrame, ExchangeConfig, Trade, TradeSide, ExchangeMode, OhlcvData
+from common.exchange.entities import (
+    TimeFrame,
+    ExchangeConfig,
+    Trade,
+    TradeSide,
+    ExchangeMode,
+    OhlcvData,
+)
 
 
 class ExchangeDataReader:
     """
     The exchange data reader reads data from the exchange
     """
+
     def __init__(self, exchange_config: ExchangeConfig):
         exchange_class = getattr(ccxt, exchange_config.id.value)
         self._exchange = exchange_class(
             {
-                "apiKey": os.environ.get("GP_API_KEY", exchange_config.api_key),
-                "secret": os.environ.get("GP_API_SECRET", exchange_config.api_secret),
+                # "apiKey": os.environ.get("GP_API_KEY", exchange_config.api_key),
+                # "secret": os.environ.get("GP_API_SECRET", exchange_config.api_secret),
                 "options": {
                     "maxRetriesOnFailure": exchange_config.max_retries_on_failure,
-                    "maxRetriesOnFailureDelay": exchange_config.max_retries_on_failure_delay
-                }
+                    "maxRetriesOnFailureDelay": exchange_config.max_retries_on_failure_delay,
+                },
             }
         )
         if exchange_config.exchange_mode == ExchangeMode.SANDBOX:
@@ -44,11 +51,18 @@ class ExchangeDataReader:
             symbol, timeframe=timeframe.value, limit=limit
         )
 
-    async def read_latest_trades(self, symbol: str) -> list[Trade]:
-        trades = await self._exchange.watch_trades(symbol)
+    async def read_latest_trades(self, symbols: list[str]) -> list[Trade]:
+        if not symbols:
+            return []
+        trades = (
+            self._exchange.watch_trades_for_symbols(symbols)
+            if len(symbols) > 1
+            else await self._exchange.watch_trades(symbols[0])
+        )
         return list(
             map(
                 lambda t: Trade(
+                    symbol=t["symbol"],
                     side=TradeSide.BUY if t["side"] == "buy" else TradeSide.SELL,
                     price=t["price"],
                     amount=t["amount"],

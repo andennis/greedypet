@@ -13,14 +13,12 @@ $$;
 -- Create table for currency pairs
 CREATE TABLE currency_pairs (
     pair_id SERIAL PRIMARY KEY,
-    base_currency VARCHAR(10) NOT NULL,
-    quote_currency VARCHAR(10) NOT NULL,
+    name VARCHAR(20) NOT NULL,
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (base_currency, quote_currency)
+    UNIQUE (name)
 );
-
--- Set ownership and permissions
+CREATE INDEX idx_currency_pairs_name ON currency_pairs (name);
 ALTER TABLE currency_pairs OWNER TO greedypet;
 
 -- Create enum for trade side
@@ -28,12 +26,13 @@ CREATE TYPE tradeside AS ENUM ('BUY', 'SELL');
 
 -- Create table for trades
 CREATE TABLE trades (
+	trade_id BIGSERIAL,
     pair_id INTEGER NOT NULL REFERENCES currency_pairs(pair_id),
     price DECIMAL(20, 8) NOT NULL,
     volume DECIMAL(20, 8) NOT NULL,
     side tradeside NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
-    PRIMARY KEY (pair_id, timestamp)
+	PRIMARY KEY (trade_id, timestamp)
 );
 
 -- Set ownership
@@ -43,8 +42,8 @@ ALTER TABLE trades OWNER TO greedypet;
 SELECT create_hypertable('trades', 'timestamp');
 
 -- Create indexes for better query performance
--- CREATE INDEX idx_trades_pair_timestamp ON trades (pair_id, timestamp DESC);
--- CREATE INDEX idx_trades_timestamp ON trades (timestamp DESC);
+CREATE INDEX idx_trades_pair_timestamp ON trades (pair_id, timestamp DESC);
+CREATE INDEX idx_trades_timestamp ON trades (timestamp DESC);
 
 -- Optional: Create a continuous aggregate for OHLCV data
 CREATE MATERIALIZED VIEW trades_1min_ohlcv
@@ -75,32 +74,32 @@ CREATE INDEX idx_trades_1min_ohlcv_pair_time
 ON trades_1min_ohlcv (pair_id, bucket);
 
 -- Insert popular currency pairs
-INSERT INTO currency_pairs (base_currency, quote_currency) VALUES
-    ('BTC', 'USDT'),
-    ('ETH', 'USDT'),
-    ('SOL', 'USDT'),
-    ('BNB', 'USDT'),
-    ('XRP', 'USDT'),
-    ('ADA', 'USDT'),
-    ('DOGE', 'USDT'),
-    ('DOT', 'USDT'),
-    ('POL', 'USDT'),
-    ('LINK', 'USDT'),
-    ('AVAX', 'USDT'),
-    ('UNI', 'USDT'),
-    ('ATOM', 'USDT'),
-    ('TRX', 'USDT'),
-    ('ETC', 'USDT'),
-    ('FIL', 'USDT'),
-    ('NEAR', 'USDT'),
-    ('ALGO', 'USDT'),
-    ('APE', 'USDT'),
-    ('AAVE', 'USDT'),
-    ('S', 'USDT'),
-    ('FTM', 'USDT'),
-    ('APEX', 'USDT'),
-    ('OP', 'USDT'),
-    ('ARB', 'USDT');
+INSERT INTO currency_pairs (name, is_active) VALUES
+    ('BTC/USDT', TRUE),
+    ('ETH/USDT', FALSE),
+    ('SOL/USDT', FALSE),
+    ('BNB/USDT', FALSE),
+    ('XRP/USDT', FALSE),
+    ('ADA/USDT', FALSE),
+    ('DOGE/USDT', FALSE),
+    ('DOT/USDT', FALSE),
+    ('POL/USDT', FALSE),
+    ('LINK/USDT', FALSE),
+    ('AVAX/USDT', FALSE),
+    ('UNI/USDT', FALSE),
+    ('ATOM/USDT', FALSE),
+    ('TRX/USDT', FALSE),
+    ('ETC/USDT', FALSE),
+    ('FIL/USDT', FALSE),
+    ('NEAR/USDT', FALSE),
+    ('ALGO/USDT', FALSE),
+    ('APE/USDT', FALSE),
+    ('AAVE/USDT', FALSE),
+    ('S/USDT', FALSE),
+    ('FTM/USDT', FALSE),
+    ('APEX/USDT', FALSE),
+    ('OP/USDT', FALSE),
+    ('ARB/USDT', FALSE);
 
 -- Grant necessary permissions
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO greedypet;

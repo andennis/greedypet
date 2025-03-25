@@ -8,7 +8,7 @@ import yaml
 import signal
 
 from app_config import AppConfig, load_config
-import data_collector as dc
+from caterpillar.data_collector import DataCollector
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ def _configure_logging(working_dir: pathlib.Path):
 
 async def run_data_collection(config: AppConfig, working_dir: str):
     def _signal_handler(sig):
-        logger.info(f"Trading process is being stopped by {signal.Signals(sig).name} ...")
+        logger.info(f"Process is being stopped by {signal.Signals(sig).name} ...")
         asyncio.get_event_loop().remove_signal_handler(sig)
         task.cancel()
 
@@ -74,7 +74,8 @@ async def run_data_collection(config: AppConfig, working_dir: str):
     for _sig in [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]:
         ev_loop.add_signal_handler(_sig, functools.partial(_signal_handler, sig=signal.SIGINT))
 
-    task = asyncio.create_task(dc.collecting_data(config))
+    dc = DataCollector(config)
+    task = asyncio.create_task(dc.collecting_data())
     await task
 
 

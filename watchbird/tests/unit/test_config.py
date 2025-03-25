@@ -10,7 +10,7 @@ from watchbird.entities import (
     TimeFrame,
     ExitMode,
     ConditionOperator,
-    TradingMode, DealExitConfig,
+    ExchangeMode, DealExitConfig,
 )
 
 
@@ -58,7 +58,7 @@ def test_load_config():
         assert config.exchange.id == ExchangeId.BYBIT
         assert config.exchange.api_key == "some_key"
         assert config.exchange.api_secret == "some_secret"
-        assert config.exchange.trading_mode == TradingMode.DEMO
+        assert config.exchange.trading_mode == ExchangeMode.DEMO
         assert config.market
         assert config.market.type == MarketType.SPOT
         assert config.market.symbol == "BTC/USDT"

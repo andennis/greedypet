@@ -1,11 +1,5 @@
 ---
 exchange:
   id: bybit
-  api_key: some_key
-  api_secret: some_secret
-  trading_mode: demo
-
-market:
-  type: spot
-  symbols:
-    - BTC/USDT
+database:
+  connection: postgresql+asyncpg://greedypet:123@192.168.2.144:5432/greedypet

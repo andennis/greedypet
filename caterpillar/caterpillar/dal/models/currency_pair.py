@@ -13,7 +13,6 @@ class CurrencyPair(Base):
     __tablename__ = "currency_pairs"
 
     pair_id: Mapped[pk_int]
-    base_currency: Mapped[str10]
-    quote_currency: Mapped[str10]
+    name: Mapped[str] = mapped_column(String(20), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())

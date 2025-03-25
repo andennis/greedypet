@@ -50,7 +50,7 @@ class ExitMode(Enum):
     SIGNAL = "signal"
 
 
-class TradingMode(Enum):
+class ExchangeMode(Enum):
     SANDBOX = "sandbox"
     DEMO = "demo"
     REAL = "real"
@@ -60,7 +60,7 @@ class ExchangeConfig(BaseModel):
     id: ExchangeId
     api_key: str | None = None
     api_secret: str | None = None
-    trading_mode: TradingMode = TradingMode.SANDBOX
+    exchange_mode: ExchangeMode = ExchangeMode.SANDBOX
     max_retries_on_failure: int = 3
     max_retries_on_failure_delay: int = 500  # milliseconds
 
