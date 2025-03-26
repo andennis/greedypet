@@ -27,12 +27,13 @@ CREATE TYPE tradeside AS ENUM ('BUY', 'SELL');
 -- Create table for trades
 CREATE TABLE trades (
 	trade_id BIGSERIAL,
+	timestamp TIMESTAMPTZ NOT NULL,
     pair_id INTEGER NOT NULL REFERENCES currency_pairs(pair_id),
     price DECIMAL(20, 8) NOT NULL,
     volume DECIMAL(20, 8) NOT NULL,
     side tradeside NOT NULL,
-    timestamp TIMESTAMPTZ NOT NULL,
-	PRIMARY KEY (trade_id, timestamp)
+    
+	PRIMARY KEY (timestamp, trade_id)
 );
 
 -- Set ownership
@@ -43,7 +44,7 @@ SELECT create_hypertable('trades', 'timestamp');
 
 -- Create indexes for better query performance
 CREATE INDEX idx_trades_pair_timestamp ON trades (pair_id, timestamp DESC);
-CREATE INDEX idx_trades_timestamp ON trades (timestamp DESC);
+-- CREATE INDEX idx_trades_timestamp ON trades (timestamp DESC);
 
 -- Optional: Create a continuous aggregate for OHLCV data
 CREATE MATERIALIZED VIEW trades_1min_ohlcv
