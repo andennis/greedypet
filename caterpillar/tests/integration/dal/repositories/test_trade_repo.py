@@ -8,7 +8,7 @@ from caterpillar.dal.models.trade import Trade, TradeSide
 
 @pytest_asyncio.fixture
 async def btc_pair(repo_pair, clean_db):
-    pair = await repo_pair.add("BTC", "USD")
+    pair = repo_pair.add("BTC/USDT")
     await repo_pair.commit()
     return pair
 
@@ -23,7 +23,7 @@ async def test_add_delete_trade(repo_trade, btc_pair):
         timestamp=datetime.now(timezone.utc)
     )
 
-    trade = await repo_trade.create(new_trade)
+    trade = repo_trade.create(new_trade)
     await repo_trade.commit()
 
     assert isinstance(trade, Trade)
@@ -39,14 +39,14 @@ async def test_add_delete_trade(repo_trade, btc_pair):
 async def test_get_filtered_trades(repo_trade, btc_pair):
     # Add trades with different timestamps
     now = datetime.now(timezone.utc)
-    trade1 = await repo_trade.create(Trade(
+    trade1 = repo_trade.create(Trade(
         pair_id=btc_pair.pair_id,
         price=Decimal("50000.00"),
         volume=Decimal("1.0"),
         side=TradeSide.BUY,
         timestamp=now - timedelta(hours=2)
     ))
-    trade2 = await repo_trade.create(Trade(
+    trade2 = repo_trade.create(Trade(
         pair_id=btc_pair.pair_id,
         price=Decimal("51000.00"),
         volume=Decimal("1.0"),

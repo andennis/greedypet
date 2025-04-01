@@ -13,6 +13,7 @@ class DbClient:
         Args:
             dsn: Database connection string in format:
                 postgresql+asyncpg://user:password@host:port/dbname
+            log_db_request: Generate DB log
         """
         self._engine = create_async_engine(dsn, echo=log_db_request)
         self._session_maker = async_sessionmaker(self._engine, expire_on_commit=False)

@@ -26,7 +26,7 @@ CREATE TYPE tradeside AS ENUM ('BUY', 'SELL');
 
 -- Create table for trades
 CREATE TABLE trades (
-	trade_id BIGSERIAL,
+	trade_id BIGSERIAL NOT NULL,
 	timestamp TIMESTAMPTZ NOT NULL,
     pair_id INTEGER NOT NULL REFERENCES currency_pairs(pair_id),
     price DECIMAL(20, 8) NOT NULL,

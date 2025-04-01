@@ -24,7 +24,7 @@ async def _refresh_continuous_aggregate(db_url: str):
 async def setup_trades(repo_ohlcv, repo_pair, repo_trade, clean_db, db_conn_url):
     await _refresh_continuous_aggregate(db_conn_url)
     # Create pair
-    pair = await repo_pair.add("BTC", "USD")
+    pair = repo_pair.add("BTC/USDT")
     await repo_pair.commit()
 
     # Add trades
@@ -46,7 +46,7 @@ async def setup_trades(repo_ohlcv, repo_pair, repo_trade, clean_db, db_conn_url)
         }
     ]
     for trade in trades_data:
-        await repo_trade.create(Trade(**trade))
+        repo_trade.create(Trade(**trade))
     await repo_trade.commit()
     return pair
 
