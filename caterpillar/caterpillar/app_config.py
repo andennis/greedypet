@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 class DataBaseConfig(BaseModel):
     connection: str
+    log_db_request: bool = False
 
 
 class AppConfig(BaseModel):

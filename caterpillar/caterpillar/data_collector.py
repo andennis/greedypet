@@ -21,7 +21,9 @@ class DataCollector:
     def __init__(self, config: AppConfig):
         self._config = config
         self._data_reader = ExchangeDataReader(self._config.exchange)
-        self._db_client = DbClient(self._config.database.connection)
+        self._db_client = DbClient(
+            self._config.database.connection, self._config.database.log_db_request
+        )
         self._pairs: dict[str, CurrencyPair] = {}
 
     async def close(self):
@@ -41,8 +43,12 @@ class DataCollector:
             pair_id=self._pairs[trade.symbol].pair_id,
             price=trade.price,
             volume=trade.amount,
-            side=DbTradeSide.BUY if trade.side == ExchangeTradeSide.BUY else DbTradeSide.SELL,
-            timestamp=datetime.fromtimestamp(trade.timestamp / 1000, timezone.utc)
+            side=(
+                DbTradeSide.BUY
+                if trade.side == ExchangeTradeSide.BUY
+                else DbTradeSide.SELL
+            ),
+            timestamp=datetime.fromtimestamp(trade.timestamp / 1000, timezone.utc),
         )
 
     async def _write_to_db(self, trades: list[ExchangeTrade]):
@@ -64,5 +70,3 @@ class DataCollector:
             logger.info("Trades reading finished")
         finally:
             await self._data_reader.close()
-
-

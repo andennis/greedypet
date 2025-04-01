@@ -6,7 +6,7 @@ class DbClient:
     Async client for managing database connection.
     """
 
-    def __init__(self, dsn: str):
+    def __init__(self, dsn: str, log_db_request: bool = False):
         """
         Initialize DB client
 
@@ -14,7 +14,7 @@ class DbClient:
             dsn: Database connection string in format:
                 postgresql+asyncpg://user:password@host:port/dbname
         """
-        self._engine = create_async_engine(dsn, echo=True)
+        self._engine = create_async_engine(dsn, echo=log_db_request)
         self._session_maker = async_sessionmaker(self._engine, expire_on_commit=False)
 
     async def close(self) -> None:

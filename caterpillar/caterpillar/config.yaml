@@ -3,3 +3,4 @@ exchange:
   id: bybit
 database:
   connection: postgresql+asyncpg://greedypet:123@192.168.2.144:5432/greedypet
+  log_db_request: True
