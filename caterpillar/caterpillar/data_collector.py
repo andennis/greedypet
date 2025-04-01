@@ -7,12 +7,12 @@ from common.exchange.entities import TradeSide as ExchangeTradeSide
 from common.exchange.data_reader import ExchangeDataReader
 
 from app_config import AppConfig
-from caterpillar.dal.db_client import DbClient
-from caterpillar.dal.models.currency_pair import CurrencyPair
-from caterpillar.dal.repositories.currency_pair_repo import CurrencyPairRepository
-from caterpillar.dal.repositories.trade_repo import TradeRepository
-from caterpillar.dal.models.trade import Trade as DbTrade
-from caterpillar.dal.models.trade import TradeSide as DbTradeSide
+from dal.db_client import DbClient
+from dal.models.currency_pair import CurrencyPair
+from dal.repositories.currency_pair_repo import CurrencyPairRepository
+from dal.repositories.trade_repo import TradeRepository
+from dal.models.trade import Trade as DbTrade
+from dal.models.trade import TradeSide as DbTradeSide
 
 logger = logging.getLogger(__name__)
 

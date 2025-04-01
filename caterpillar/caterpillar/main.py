@@ -8,7 +8,7 @@ import yaml
 import signal
 
 from app_config import AppConfig, load_config
-from caterpillar.data_collector import DataCollector
+from data_collector import DataCollector
 
 logger = logging.getLogger(__name__)
 
