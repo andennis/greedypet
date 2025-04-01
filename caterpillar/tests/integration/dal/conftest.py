@@ -12,18 +12,6 @@ from caterpillar.dal.db_client import DbClient
 load_dotenv()
 
 
-# @pytest_asyncio.fixture(scope="session")
-# async def setup_test_db():
-#     """Setup test database with required tables."""
-#     engine = create_async_engine(TEST_DB_URL)
-#
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.drop_all)
-#         await conn.run_sync(Base.metadata.create_all)
-#         # await conn.execute(text("SELECT create_hypertable('trades', 'timestamp')"))
-#
-#     await engine.dispose()
-
 @pytest.fixture
 def db_conn_url():
     return os.environ["GP_TEST_DB_URL"]
@@ -40,5 +28,5 @@ async def clean_db(db_conn_url):
 
 @pytest_asyncio.fixture
 async def db_client(db_conn_url):
-    async with DbClient(db_conn_url) as client:
+    async with DbClient(dsn=db_conn_url, log_db_request=True) as client:
         yield client

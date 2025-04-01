@@ -55,7 +55,7 @@ class ExchangeDataReader:
         if not symbols:
             return []
         trades = (
-            self._exchange.watch_trades_for_symbols(symbols)
+            await self._exchange.watch_trades_for_symbols(symbols)
             if len(symbols) > 1
             else await self._exchange.watch_trades(symbols[0])
         )
