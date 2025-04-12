@@ -52,12 +52,19 @@ WITH (timescaledb.continuous) AS
 SELECT
     time_bucket('1 minute', timestamp) AS bucket,
     pair_id,
+	-- prices
     first(price, timestamp) AS open,
     max(price) AS high,
     min(price) AS low,
     last(price, timestamp) AS close,
-    sum(volume) AS volume,
-    count(*) AS number_of_trades
+	-- trade volumes
+    sum(CASE WHEN side = 'BUY' THEN volume ELSE 0 END) AS buy_volume,
+    sum(CASE WHEN side = 'SELL' THEN volume ELSE 0 END) AS sell_volume,
+    sum(volume) AS total_volume,
+	-- number of traders
+    count(CASE WHEN side = 'BUY' THEN 1 END) AS buy_trades,
+    count(CASE WHEN side = 'SELL' THEN 1 END) AS sell_trades,
+	count(*) AS total_trades
 FROM trades
 GROUP BY bucket, pair_id;
 
