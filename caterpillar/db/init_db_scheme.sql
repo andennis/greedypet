@@ -84,7 +84,7 @@ ON trades_1min_ohlcv (pair_id, bucket);
 -- Insert popular currency pairs
 INSERT INTO currency_pairs (name, is_active) VALUES
     ('BTC/USDT', TRUE),
-    ('ETH/USDT', FALSE),
+    ('ETH/USDT', TRUE),
     ('SOL/USDT', FALSE),
     ('BNB/USDT', FALSE),
     ('XRP/USDT', FALSE),
