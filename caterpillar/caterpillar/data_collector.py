@@ -60,9 +60,10 @@ class DataCollector:
             await repo.commit()
 
     async def collecting_data(self):
+        pairs = await self._get_pairs()
+        symbols = list(pairs.keys())
+        logger.info("Symbols to collect", extra=dict(symbols=symbols))
         try:
-            pairs = await self._get_pairs()
-            symbols = list(pairs.keys())
             while True:
                 trades = await self._data_reader.read_latest_trades(symbols)
                 await self._write_to_db(trades)

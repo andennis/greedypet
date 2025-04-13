@@ -7,8 +7,7 @@ ccxt==4.*
 mergedeep
 asyncpg==0.*
 sqlalchemy[asyncio]==2.*
-../common
 pytest
 pytest-asyncio
 black
-
+common @ https://pypi.fury.io/andennis/-/ver_2jfxRl/common-0.1.0-py3-none-any.whl
