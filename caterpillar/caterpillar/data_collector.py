@@ -2,8 +2,8 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 
-from common.exchange.entities import Trade as ExchangeTrade
-from common.exchange.entities import TradeSide as ExchangeTradeSide
+from common.exchange.entities import ExchangeTrade
+from common.exchange.entities import ExchangeTradeSide
 from common.exchange.data_reader import ExchangeDataReader
 
 from app_config import AppConfig

@@ -40,15 +40,15 @@ class ExchangeConfig(BaseModel):
     max_retries_on_failure_delay: int = 500  # milliseconds
 
 
-class TradeSide(Enum):
+class ExchangeTradeSide(Enum):
     BUY = 1
     SELL = 2
 
 
 @dataclass
-class Trade:
+class ExchangeTrade:
     symbol: str
-    side: TradeSide
+    side: ExchangeTradeSide
     price: float
     amount: float
     timestamp: int

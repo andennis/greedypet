@@ -9,11 +9,6 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install system dependencies
-#RUN apt-get update && apt-get install -y \
-#    build-essential \
-#    && rm -rf /var/lib/apt/lists/*
-
 # Copy the current project
 COPY . /app/
 

@@ -10,4 +10,4 @@ sqlalchemy[asyncio]==2.*
 pytest
 pytest-asyncio
 black
-common @ https://pypi.fury.io/andennis/-/ver_2jfxRl/common-0.1.0-py3-none-any.whl
+# common @ https://pypi.fury.io/andennis/common-0.0.1-py3-none-any.whl

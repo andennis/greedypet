@@ -3,8 +3,8 @@ import ccxt.pro as ccxt
 from common.exchange.entities import (
     TimeFrame,
     ExchangeConfig,
-    Trade,
-    TradeSide,
+    ExchangeTrade,
+    ExchangeTradeSide,
     ExchangeMode,
     OhlcvData,
 )
@@ -51,7 +51,7 @@ class ExchangeDataReader:
             symbol, timeframe=timeframe.value, limit=limit
         )
 
-    async def read_latest_trades(self, symbols: list[str]) -> list[Trade]:
+    async def read_latest_trades(self, symbols: list[str]) -> list[ExchangeTrade]:
         if not symbols:
             return []
         trades = (
@@ -61,9 +61,13 @@ class ExchangeDataReader:
         )
         return list(
             map(
-                lambda t: Trade(
+                lambda t: ExchangeTrade(
                     symbol=t["symbol"],
-                    side=TradeSide.BUY if t["side"] == "buy" else TradeSide.SELL,
+                    side=(
+                        ExchangeTradeSide.BUY
+                        if t["side"] == "buy"
+                        else ExchangeTradeSide.SELL
+                    ),
                     price=t["price"],
                     amount=t["amount"],
                     timestamp=t["timestamp"],  # milliseconds
