@@ -24,9 +24,7 @@ class OHLCVData(Base):
     # trade volumes
     buy_volume: Mapped[numeric20_8]
     sell_volume: Mapped[numeric20_8]
-    total_volume: Mapped[numeric20_8]
     # number of traders
-    total_trades: Mapped[int] = mapped_column(Integer, nullable=False)
     buy_trades: Mapped[int] = mapped_column(Integer, nullable=False)
     sell_trades: Mapped[int] = mapped_column(Integer, nullable=False)
 

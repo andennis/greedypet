@@ -70,7 +70,5 @@ async def test_get_candles(repo_ohlcv, setup_trades, db_conn_url):
     assert candle.close == Decimal("50100.00")
     assert candle.buy_volume == Decimal("1.0")
     assert candle.sell_volume == Decimal("0.5")
-    assert candle.total_volume == Decimal("1.5")
     assert candle.buy_trades == 1
     assert candle.sell_trades == 1
-    assert candle.total_trades == 2

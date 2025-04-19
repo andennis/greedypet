@@ -4,18 +4,18 @@ import pytest
 import pytest_asyncio
 from common.db.config import DatabaseConfig
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from caterpillar.dal.db_client import DbClient
 
-# load_dotenv()
+load_dotenv()
 
 
 @pytest.fixture
 def db_conn_url():
-    return DatabaseConfig(_env_file='../../.env').connection
+    return DatabaseConfig().connection
 
 
 @pytest_asyncio.fixture

@@ -60,11 +60,9 @@ SELECT
 	-- trade volumes
     sum(CASE WHEN side = 'BUY' THEN volume ELSE 0 END) AS buy_volume,
     sum(CASE WHEN side = 'SELL' THEN volume ELSE 0 END) AS sell_volume,
-    sum(volume) AS total_volume,
 	-- number of traders
     count(CASE WHEN side = 'BUY' THEN 1 END) AS buy_trades,
-    count(CASE WHEN side = 'SELL' THEN 1 END) AS sell_trades,
-	count(*) AS total_trades
+    count(CASE WHEN side = 'SELL' THEN 1 END) AS sell_trades
 FROM trades
 GROUP BY bucket, pair_id;
 
@@ -79,7 +77,7 @@ SELECT add_continuous_aggregate_policy('trades_1min_ohlcv',
 
 -- Create indexes on the continuous aggregate
 CREATE INDEX idx_trades_1min_ohlcv_pair_time 
-ON trades_1min_ohlcv (pair_id, bucket);
+ON trades_1min_ohlcv (pair_id, bucket DESC);
 
 -- Insert popular currency pairs
 INSERT INTO currency_pairs (name, is_active) VALUES
