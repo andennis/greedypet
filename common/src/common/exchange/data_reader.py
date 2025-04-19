@@ -27,9 +27,9 @@ class ExchangeDataReader:
                 },
             }
         )
-        if exchange_config.exchange_mode == ExchangeMode.SANDBOX:
+        if exchange_config.mode == ExchangeMode.SANDBOX:
             self._exchange.set_sandbox_mode(True)
-        elif exchange_config.exchange_mode == ExchangeMode.DEMO:
+        elif exchange_config.mode == ExchangeMode.DEMO:
             self._exchange.enable_demo_trading(True)
 
     @property

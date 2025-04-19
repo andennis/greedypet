@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 OhlcvData = list[list[float]]
 
@@ -31,11 +32,15 @@ class ExchangeMode(Enum):
     REAL = "real"
 
 
-class ExchangeConfig(BaseModel):
-    id: ExchangeId
+class ExchangeConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="GRPT_EXCHANGE_", env_ignore_empty=True, extra="ignore"
+    )
+
+    id: ExchangeId = ExchangeId.BYBIT
     api_key: str | None = None
     api_secret: str | None = None
-    exchange_mode: ExchangeMode = ExchangeMode.REAL
+    mode: ExchangeMode = ExchangeMode.REAL
     max_retries_on_failure: int = 3
     max_retries_on_failure_delay: int = 500  # milliseconds
 

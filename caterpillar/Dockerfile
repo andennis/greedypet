@@ -1,4 +1,3 @@
-# Use Python 3.11 as the base image
 FROM python:3.11-slim
 
 # Set working directory
@@ -19,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PYTHONPATH=/app
 
 # Command to run when container starts
-CMD ["python", "./caterpillar/main.py"]
+CMD ["caterpillar.sh"]

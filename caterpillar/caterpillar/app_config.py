@@ -1,25 +1,19 @@
 import logging
-import yaml
 from pydantic import BaseModel
 
-from common.exchange.entities import ExchangeConfig
+from common.exchange.entities import ExchangeConfig, ExchangeId
+from common.db.config import DatabaseConfig
 
 logger = logging.getLogger(__name__)
 
 
-class DataBaseConfig(BaseModel):
-    connection: str
-    log_db_request: bool = False
-
-
 class AppConfig(BaseModel):
     exchange: ExchangeConfig
-    database: DataBaseConfig
+    database: DatabaseConfig
 
 
 def load_config(file_name: str):
-    with open(file_name, "r") as f:
-        cfg = yaml.safe_load(f)
-        config = AppConfig(**cfg)
-        logger.info(f"Config loaded from {file_name}")
-        return config
+    return AppConfig(
+        exchange=ExchangeConfig(),
+        database=DatabaseConfig()
+    )
