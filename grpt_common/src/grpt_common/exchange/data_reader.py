@@ -1,6 +1,6 @@
 import ccxt.pro as ccxt
 
-from common.exchange.entities import (
+from grpt_common.exchange.entities import (
     TimeFrame,
     ExchangeConfig,
     ExchangeTrade,

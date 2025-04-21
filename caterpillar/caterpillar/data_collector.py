@@ -2,9 +2,9 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 
-from common.exchange.entities import ExchangeTrade
-from common.exchange.entities import ExchangeTradeSide
-from common.exchange.data_reader import ExchangeDataReader
+from grpt_common.exchange.entities import ExchangeTrade
+from grpt_common.exchange.entities import ExchangeTradeSide
+from grpt_common.exchange.data_reader import ExchangeDataReader
 
 from app_config import AppConfig
 from dal.db_client import DbClient
@@ -65,7 +65,9 @@ class DataCollector:
         logger.info("Symbols to collect", extra=dict(symbols=symbols))
         try:
             while True:
+                logger.debug("Waiting for trades")
                 trades = await self._data_reader.read_latest_trades(symbols)
+                logger.debug("Writing trades to DB", extra=dict(trades_number=len(trades)))
                 await self._write_to_db(trades)
         except asyncio.CancelledError:
             logger.info("Trades reading finished")

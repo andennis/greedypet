@@ -1,9 +1,12 @@
 import logging
+
+from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from common.exchange.entities import ExchangeConfig, ExchangeId
-from common.db.config import DatabaseConfig
+from grpt_common.exchange.entities import ExchangeConfig, ExchangeId
+from grpt_common.db.config import DatabaseConfig
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 

@@ -10,4 +10,5 @@ sqlalchemy[asyncio]==2.*
 pytest
 pytest-asyncio
 black
-# common @ https://pypi.fury.io/andennis/common-0.0.1-py3-none-any.whl
+--extra-index-url https://pypi.fury.io/andennis/
+grpt_common

@@ -2,7 +2,7 @@ import os
 
 import pytest
 import pytest_asyncio
-from common.db.config import DatabaseConfig
+from grpt_common.db.config import DatabaseConfig
 
 from dotenv import load_dotenv
 from sqlalchemy import text

@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, AsyncMock
 
-from common.exchange.data_reader import ExchangeDataReader
-from common.exchange.entities import ExchangeConfig, ExchangeId, TimeFrame, ExchangeTrade, ExchangeTradeSide
+from grpt_common.exchange.data_reader import ExchangeDataReader
+from grpt_common.exchange.entities import ExchangeConfig, ExchangeId, TimeFrame, ExchangeTrade, ExchangeTradeSide
 
 
 @pytest.fixture

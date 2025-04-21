@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PYTHONPATH=/app
 
 # Command to run when container starts
-CMD ["caterpillar.sh"]
+CMD ["./caterpillar.sh"]

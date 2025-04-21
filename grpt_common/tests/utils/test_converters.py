@@ -1,6 +1,6 @@
 import pytest
 
-from common.utils.converters import str_to_bool
+from grpt_common.utils.converters import str_to_bool
 
 
 @pytest.mark.parametrize("str_val, bool_val", [

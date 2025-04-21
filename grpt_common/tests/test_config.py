@@ -1,8 +1,8 @@
 import os
 from unittest.mock import patch
 
-from common.db.config import DatabaseConfig
-from common.exchange.entities import ExchangeConfig, ExchangeId, ExchangeMode
+from grpt_common.db.config import DatabaseConfig
+from grpt_common.exchange.entities import ExchangeConfig, ExchangeId, ExchangeMode
 
 
 @patch.dict(os.environ, clear=True)
